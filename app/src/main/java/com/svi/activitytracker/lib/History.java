@@ -35,7 +35,7 @@ public class History {
 //        Date now = new Date();
         cal.setTime(date);
         long endTime = cal.getTimeInMillis();
-        cal.add(Calendar.WEEK_OF_YEAR, -1);
+        cal.add(Calendar.DAY_OF_MONTH, -1);
         long startTime = cal.getTimeInMillis();
 
         read(startTime, endTime);
@@ -43,12 +43,13 @@ public class History {
 
     public void read(long start, long end) {
 
-        final DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");// SimpleDateFormat.getDateInstance();
-        display.show("history reading range: " + dateFormat.format(start) + " - " + dateFormat.format(end));
+        final DateFormat dateFormat = new SimpleDateFormat("HH:mm");// SimpleDateFormat.getDateInstance();
+        //display.show("history reading range: " + dateFormat.format(start) + " - " + dateFormat.format(end));
+        display.show("Here are your activities for the day:");
 
         DataReadRequest readRequest = new DataReadRequest.Builder()
                 .aggregate(DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
-                .bucketByTime(1, TimeUnit.DAYS)
+                .bucketByActivitySegment(5, TimeUnit.MINUTES)
                 .setTimeRange(start, end, TimeUnit.MILLISECONDS)
                 .build();
 
@@ -56,12 +57,12 @@ public class History {
             @Override
             public void onResult(DataReadResult dataReadResult) {
                 if (dataReadResult.getBuckets().size() > 0) {
-                    display.show("DataSet.size(): "
-                            + dataReadResult.getBuckets().size());
+                    /*display.show("DataSet.size(): "
+                            + dataReadResult.getBuckets().size());*/
                     for (Bucket bucket : dataReadResult.getBuckets()) {
                         List<DataSet> dataSets = bucket.getDataSets();
                         for (DataSet dataSet : dataSets) {
-                            display.show("dataSet.dataType: " + dataSet.getDataType().getName());
+                            //display.show("dataSet.dataType: " + dataSet.getDataType().getName());
 
                             for (DataPoint dp : dataSet.getDataPoints()) {
                                 describeDataPoint(dp, dateFormat);
@@ -69,7 +70,7 @@ public class History {
                         }
                     }
                 } else if (dataReadResult.getDataSets().size() > 0) {
-                    display.show("dataSet.size(): " + dataReadResult.getDataSets().size());
+                    //display.show("dataSet.size(): " + dataReadResult.getDataSets().size());
                     for (DataSet dataSet : dataReadResult.getDataSets()) {
                         display.show("dataType: " + dataSet.getDataType().getName());
 
@@ -84,16 +85,27 @@ public class History {
     }
 
     public void describeDataPoint(DataPoint dp, DateFormat dateFormat) {
-        String msg = "dataPoint: "
-                + "type: " + dp.getDataType().getName() +"\n"
-                + ", range: [" + dateFormat.format(dp.getStartTime(TimeUnit.MILLISECONDS)) + "-" + dateFormat.format(dp.getEndTime(TimeUnit.MILLISECONDS)) + "]\n"
-                + ", fields: [";
+        String msg = "";
+        if (dp.getDataType().equals(DataType.TYPE_STEP_COUNT_DELTA)) {
+            for (Field field : dp.getDataType().getFields()) {
+                msg += dp.getValue(field) + " " + field.getName();
+            }
 
-        for(Field field : dp.getDataType().getFields()) {
-            msg += field.getName() + "=" + dp.getValue(field) + " ";
+            String startTime = dateFormat.format(dp.getStartTime(TimeUnit.MILLISECONDS));
+            msg += " walking\nat " + startTime + "\n";
+
+        } else {
+            msg = "dataPoint: "
+                    + "type: " + dp.getDataType().getName() + "\n"
+                    + ", range: [" + dateFormat.format(dp.getStartTime(TimeUnit.MILLISECONDS)) + "-" + dateFormat.format(dp.getEndTime(TimeUnit.MILLISECONDS)) + "]\n"
+                    + ", fields: [";
+
+            for (Field field : dp.getDataType().getFields()) {
+                msg += field.getName() + "=" + dp.getValue(field) + " ";
+            }
+
+            msg += "]";
         }
-
-        msg += "]";
         display.show(msg);
     }
 }
