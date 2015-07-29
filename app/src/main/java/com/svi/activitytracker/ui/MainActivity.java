@@ -4,6 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.DatePicker;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import com.svi.activitytracker.FitPagerAdapter;
 import com.svi.activitytracker.ItemFragment;
@@ -35,11 +38,27 @@ public class MainActivity extends AppCompatActivity implements ItemFragment.LogP
             log(msg);
         }
     };
+    private DatePicker mDatePicker;
+    private ListView mHistoryView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mDatePicker = (DatePicker) findViewById(R.id.date_to_show);
+        mHistoryView = (ListView) findViewById(R.id.history_view);
+        Date date = new Date();
+        mDatePicker.init(date.getYear() + 1900, date.getMonth(), date.getDate(), new DatePicker.OnDateChangedListener() {
+            @Override
+            public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                if (history != null) {
+                    history.getHistory(year, monthOfYear, dayOfMonth, mHistoryView);
+                }
+            }
+        });
+
+
+
         viewPager = (ViewPager)findViewById(R.id.viewPager);
         pagerAdapter = new FitPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(pagerAdapter);
@@ -72,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements ItemFragment.LogP
                         recording.listSubscriptions();
 
 //                        history demo
-                        history = new History(client.getClient(), new Display(History.class.getName()) {
+                        history = new History(MainActivity.this, client.getClient(), new Display(History.class.getName()) {
                             @Override
                             public void show(String msg) {
                                 log(msg);
@@ -81,7 +100,9 @@ public class MainActivity extends AppCompatActivity implements ItemFragment.LogP
 //                                InMemoryLog.getInstance().add(FitPagerAdapter.FragmentIndex.HISTORY, msg);
                             }
                         });
-                        history.readWeekBefore(new Date());
+                        //history.readWeekBefore(new Date());
+                        Date date = new Date();
+                        history.getHistory(date.getYear() + 1900, date.getMonth(), date.getDate(), mHistoryView);
                     }
                 },
                 new Display(Client.class.getName()) {

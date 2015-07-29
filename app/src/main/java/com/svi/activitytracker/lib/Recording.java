@@ -55,7 +55,7 @@ public class Recording {
     }
 
     public void unsubscribe() {
-        Fitness.RecordingApi.unsubscribe(client, DataType.TYPE_STEP_COUNT_DELTA).setResultCallback(new ResultCallback<Status>() {
+        /*Fitness.RecordingApi.unsubscribe(client, DataType.TYPE_STEP_COUNT_DELTA).setResultCallback(new ResultCallback<Status>() {
                     @Override
                     public void onResult(Status status) {
                         if (status.isSuccess()) {
@@ -64,6 +64,6 @@ public class Recording {
                             display.show("Failed to unsubscribe for data type: " + DataType.TYPE_STEP_COUNT_DELTA.toString());
                         }
                     }
-                });
+                });*/
     }
 }

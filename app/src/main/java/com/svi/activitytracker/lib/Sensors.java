@@ -60,8 +60,9 @@ public class Sensors {
                         for (DataSource dataSource : dataSourcesResult.getDataSources()) {
                             Device device = dataSource.getDevice();
                             if (device == null) {
-                                return;
+                                continue;
                             }
+
                             String fields = dataSource.getDataType().getFields().toString();
                             datasources.add(device.getManufacturer() + " " + device.getModel() + " [" + dataSource.getDataType().getName() + " " + fields + "]");
 
