@@ -1,10 +1,13 @@
-package com.svi.activitytracker;
+package com.svi.activitytracker.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 
+import com.svi.activitytracker.FitPagerAdapter;
+import com.svi.activitytracker.ItemFragment;
+import com.svi.activitytracker.R;
 import com.svi.activitytracker.common.Constants;
 import com.svi.activitytracker.common.Display;
 import com.svi.activitytracker.common.InMemoryLog;
@@ -16,7 +19,7 @@ import com.svi.activitytracker.lib.Sensors;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class MainActivity extends AppCompatActivity implements ItemFragment.LogProvider{
+public class MainActivity extends AppCompatActivity implements ItemFragment.LogProvider {
 
     private static final String TAG = MainActivity.class.getName();
 
