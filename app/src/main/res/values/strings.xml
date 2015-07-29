@@ -13,8 +13,9 @@
 
     <string name="text_signup">Sign Up</string>
     <string name="text_login">Login</string>
+    <string name="text_start">Start</string>
     <string name="text_new_sign_up">New to track? <b>Sign up here.</b></string>
-
-    <string name="text_terms">By using Activity Tracker, you agress to Activity Tracker\'s\nTerms of Use and Privacy Policy</string>
+    <string name="text_already_tracker">Already a tracker? <b>Log In</b></string>
+    <string name="text_terms">By using Activity Tracker, you agrees to Activity Tracker\'s\n<b>Terms of Use</b> and <b>Privacy Policy</b></string>
 
 </resources>
