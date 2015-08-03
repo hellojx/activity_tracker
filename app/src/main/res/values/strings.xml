@@ -18,8 +18,10 @@
     <string name="text_already_tracker">Already a tracker? <b>Log In</b></string>
     <string name="text_terms">By using Activity Tracker, you agrees to Activity Tracker\'s\n<b>Terms of Use</b> and <b>Privacy Policy</b></string>
 
-    <!-- Activities -->
+    <!-- Activities --> 
     <string name="activity_walking">Walking</string>
-    <string name="activity_in_vehicle">In Vehicle</string>
+     <string name="activity_in_vehicle">In Vehicle</string> 
+    <string name="activity_biking">Biking</string> 
+    <string name="activity_running">Running</string> 
     <string name="activity_unknown">Unknown Activity</string>
 </resources>

@@ -67,7 +67,7 @@ public class History {
 
         DataReadRequest readRequest = new DataReadRequest.Builder()
                 .aggregate(DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
-                //.aggregate(DataType.TYPE_DISTANCE_DELTA, DataType.AGGREGATE_DISTANCE_DELTA)
+                        //.aggregate(DataType.TYPE_DISTANCE_DELTA, DataType.AGGREGATE_DISTANCE_DELTA)
                 .aggregate(DataType.TYPE_ACTIVITY_SEGMENT, DataType.AGGREGATE_ACTIVITY_SUMMARY)
                 .bucketByActivitySegment(5, TimeUnit.MINUTES)
                 .setTimeRange(start, end, TimeUnit.MILLISECONDS)
@@ -132,28 +132,37 @@ public class History {
                     steps, null));
 
         }*/ else if (dp.getDataType().equals(DataType.AGGREGATE_ACTIVITY_SUMMARY)) {
+
+            msg = "dataPoint: "
+                    + "type: " + dp.getDataType().getName() + "\n"
+                    + ", range: [" + dateFormat.format(dp.getStartTime(TimeUnit.MILLISECONDS)) + "-" + dateFormat.format(dp.getEndTime(TimeUnit.MILLISECONDS)) + "]\n"
+                    + ", fields: [";
+
+            for (Field field : dp.getDataType().getFields()) {
+                msg += field.getName() + "=" + dp.getValue(field) + " ";
+            }
+
+            msg += "]";
+
+
             List<Field> fields = dp.getDataType().getFields();
             int activityType = Integer.valueOf(dp.getValue(fields.get(0)).toString());
             long activityDuration = Long.valueOf(dp.getValue(fields.get(1)).toString());
             switch (activityType) {
                 case Constants.ACTIVITY_TYPE_IN_VEHICLE:
+                case Constants.ACTIVITY_TYPE_BIKING:
+                case Constants.ACTIVITY_TYPE_RUNNING:
                     mHistoryList.add(new HistoryItem(null, activityType, dp.getStartTime(TimeUnit.MILLISECONDS),
                             activityDuration, 0, null));
                     break;
+                case Constants.ACTIVITY_TYPE_STILL: //not moving activity
+                case Constants.ACTIVITY_TYPE_WALKING: //skip walking activity summary
+                case Constants.ACTIVITY_TYPE_UNKNOWN: //skip unknown activity
+                    break;
+                default:
+                    mHistoryList.add(new HistoryItem(msg, 0, 0, 0, 0, null));
+                    break;
             }
-
-
-
-                msg = "dataPoint: "
-                        + "type: " + dp.getDataType().getName() + "\n"
-                        + ", range: [" + dateFormat.format(dp.getStartTime(TimeUnit.MILLISECONDS)) + "-" + dateFormat.format(dp.getEndTime(TimeUnit.MILLISECONDS)) + "]\n"
-                        + ", fields: [";
-
-                for (Field field : dp.getDataType().getFields()) {
-                    msg += field.getName() + "=" + dp.getValue(field) + " ";
-                }
-
-                msg += "]";
         }
         display.show(msg);
     }
@@ -246,6 +255,12 @@ public class History {
                         break;
                     case Constants.ACTIVITY_TYPE_IN_VEHICLE:
                         activityName = R.string.activity_in_vehicle;
+                        break;
+                    case Constants.ACTIVITY_TYPE_BIKING:
+                        activityName = R.string.activity_biking;
+                        break;
+                    case Constants.ACTIVITY_TYPE_RUNNING:
+                        activityName = R.string.activity_running;
                         break;
                 }
 
