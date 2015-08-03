@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.fitness.Fitness;
+import com.google.android.gms.fitness.FitnessActivities;
 import com.google.android.gms.fitness.data.Bucket;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
@@ -21,6 +22,7 @@ import com.google.android.gms.fitness.request.DataReadRequest;
 import com.google.android.gms.fitness.result.DataReadResult;
 
 import com.svi.activitytracker.R;
+import com.svi.activitytracker.common.Constants;
 import com.svi.activitytracker.common.Display;
 
 import java.text.DateFormat;
@@ -65,7 +67,9 @@ public class History {
 
         DataReadRequest readRequest = new DataReadRequest.Builder()
                 .aggregate(DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
-                .bucketByActivitySegment(1, TimeUnit.MINUTES)
+                //.aggregate(DataType.TYPE_DISTANCE_DELTA, DataType.AGGREGATE_DISTANCE_DELTA)
+                .aggregate(DataType.TYPE_ACTIVITY_SEGMENT, DataType.AGGREGATE_ACTIVITY_SUMMARY)
+                .bucketByActivitySegment(5, TimeUnit.MINUTES)
                 .setTimeRange(start, end, TimeUnit.MILLISECONDS)
                 .build();
 
@@ -117,20 +121,39 @@ public class History {
             String startTime = dateFormat.format(dp.getStartTime(TimeUnit.MILLISECONDS));
             msg += " walking\nat " + startTime + "\n";
 
-            mHistoryList.add(new HistoryItem(dp.getStartTime(TimeUnit.MILLISECONDS), dp.getEndTime(TimeUnit.MILLISECONDS) - dp.getStartTime(TimeUnit.MILLISECONDS),
+            mHistoryList.add(new HistoryItem(null, Constants.ACTIVITY_TYPE_WALKING, dp.getStartTime(TimeUnit.MILLISECONDS),
+                    dp.getEndTime(TimeUnit.MILLISECONDS) - dp.getStartTime(TimeUnit.MILLISECONDS),
                     steps, null));
 
-        } else {
-            msg = "dataPoint: "
-                    + "type: " + dp.getDataType().getName() + "\n"
-                    + ", range: [" + dateFormat.format(dp.getStartTime(TimeUnit.MILLISECONDS)) + "-" + dateFormat.format(dp.getEndTime(TimeUnit.MILLISECONDS)) + "]\n"
-                    + ", fields: [";
+        } /*else if (dp.getDataType().equals(DataType.TYPE_DISTANCE_DELTA)) {
 
-            for (Field field : dp.getDataType().getFields()) {
-                msg += field.getName() + "=" + dp.getValue(field) + " ";
+            mHistoryList.add(new HistoryItem(Constants.ACTIVITY_TYPE_WALKING, dp.getStartTime(TimeUnit.MILLISECONDS),
+                    dp.getEndTime(TimeUnit.MILLISECONDS) - dp.getStartTime(TimeUnit.MILLISECONDS),
+                    steps, null));
+
+        }*/ else if (dp.getDataType().equals(DataType.AGGREGATE_ACTIVITY_SUMMARY)) {
+            List<Field> fields = dp.getDataType().getFields();
+            int activityType = Integer.valueOf(dp.getValue(fields.get(0)).toString());
+            long activityDuration = Long.valueOf(dp.getValue(fields.get(1)).toString());
+            switch (activityType) {
+                case Constants.ACTIVITY_TYPE_IN_VEHICLE:
+                    mHistoryList.add(new HistoryItem(null, activityType, dp.getStartTime(TimeUnit.MILLISECONDS),
+                            activityDuration, 0, null));
+                    break;
             }
 
-            msg += "]";
+
+
+                msg = "dataPoint: "
+                        + "type: " + dp.getDataType().getName() + "\n"
+                        + ", range: [" + dateFormat.format(dp.getStartTime(TimeUnit.MILLISECONDS)) + "-" + dateFormat.format(dp.getEndTime(TimeUnit.MILLISECONDS)) + "]\n"
+                        + ", fields: [";
+
+                for (Field field : dp.getDataType().getFields()) {
+                    msg += field.getName() + "=" + dp.getValue(field) + " ";
+                }
+
+                msg += "]";
         }
         display.show(msg);
     }
@@ -154,15 +177,19 @@ public class History {
     }
 
     private class HistoryItem {
+        public String description;
+        public int activityType;
         public long time;
         public long timeInterval;
         public long distance;
         public Location location;
-        public HistoryItem(long time, long timeInterval, long distance, Location location) {
+        public HistoryItem(String description, int activityType, long time, long timeInterval, long distance, Location location) {
             this.time = time;
             this.timeInterval = timeInterval;
             this.distance = distance;
             this.location = location;
+            this.activityType = activityType;
+            this.description = description;
         }
     }
 
@@ -203,14 +230,31 @@ public class History {
             }
 
             HistoryItem item = mHistoryList.get(position);
-            final DateFormat dateFormat = new SimpleDateFormat("HH:mm");
-            String date = dateFormat.format(item.time);
+            if (item.description != null) {
+                ((TextView) convertView.findViewById(R.id.activity_type)).setText(item.description);
+                ((TextView) convertView.findViewById(R.id.activity_time_interval)).setText("");
+                ((TextView) convertView.findViewById(R.id.activity_time)).setText("");
+                ((TextView) convertView.findViewById(R.id.activity_distance)).setText("");
+            } else {
+                final DateFormat dateFormat = new SimpleDateFormat("HH:mm");
+                String date = dateFormat.format(item.time);
 
-            ((TextView) convertView.findViewById(R.id.activity_type)).setText("Walking");
-            ((TextView) convertView.findViewById(R.id.activity_time_interval)).setText(TimeUnit.MILLISECONDS.toMinutes(item.timeInterval) + " minutes");
-            ((TextView) convertView.findViewById(R.id.activity_time)).setText(date);
-            ((TextView) convertView.findViewById(R.id.activity_distance)).setText(item.distance + " steps");
+                int activityName = R.string.activity_unknown;
+                switch (item.activityType) {
+                    case Constants.ACTIVITY_TYPE_WALKING:
+                        activityName = R.string.activity_walking;
+                        break;
+                    case Constants.ACTIVITY_TYPE_IN_VEHICLE:
+                        activityName = R.string.activity_in_vehicle;
+                        break;
+                }
 
+
+                ((TextView) convertView.findViewById(R.id.activity_type)).setText(activityName);
+                ((TextView) convertView.findViewById(R.id.activity_time_interval)).setText(TimeUnit.MILLISECONDS.toMinutes(item.timeInterval) + " minutes");
+                ((TextView) convertView.findViewById(R.id.activity_time)).setText(date);
+                ((TextView) convertView.findViewById(R.id.activity_distance)).setText(item.distance == 0 ? "" : item.distance + " steps");
+            }
 
             return convertView;
         }
