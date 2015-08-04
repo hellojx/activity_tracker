@@ -21,15 +21,9 @@ public class SplashActivity extends AppCompatActivity {
         getSupportActionBar().hide();
     }
 
-    @OnClick(R.id.btnSignUp)
-    public void signUp() {
-        startActivity(new Intent(getApplicationContext(), SignUpActivity.class));
-        finish();
-    }
-
-    @OnClick(R.id.btnLogin)
-    public void login() {
-        startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+    @OnClick(R.id.btnContinue)
+    public void continueWith() {
+        startActivity(new Intent(getApplicationContext(), MainActivity.class));
         finish();
     }
 }

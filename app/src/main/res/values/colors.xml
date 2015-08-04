@@ -4,4 +4,6 @@
     <color name="blue_btn_bg">#119af5</color>
     <color name="blue_btn_pressed_bg">#0f82bf</color>
 
+    <color name="red_btn">#de4b3e</color>
+    <color name="red_btn_pressed_bg">#d4362a</color>
 </resources>
