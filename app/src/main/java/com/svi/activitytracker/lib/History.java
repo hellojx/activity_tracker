@@ -66,10 +66,10 @@ public class History {
         display.show("Here are your activities for the day:");
 
         DataReadRequest readRequest = new DataReadRequest.Builder()
-                .aggregate(DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
-                        //.aggregate(DataType.TYPE_DISTANCE_DELTA, DataType.AGGREGATE_DISTANCE_DELTA)
+                //.aggregate(DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
+                //.aggregate(DataType.TYPE_DISTANCE_DELTA, DataType.AGGREGATE_DISTANCE_DELTA)
                 .aggregate(DataType.TYPE_ACTIVITY_SEGMENT, DataType.AGGREGATE_ACTIVITY_SUMMARY)
-                .bucketByActivitySegment(5, TimeUnit.MINUTES)
+                .bucketByActivitySegment(1, TimeUnit.MINUTES)
                 .setTimeRange(start, end, TimeUnit.MILLISECONDS)
                 .build();
 
@@ -152,11 +152,11 @@ public class History {
                 case Constants.ACTIVITY_TYPE_IN_VEHICLE:
                 case Constants.ACTIVITY_TYPE_BIKING:
                 case Constants.ACTIVITY_TYPE_RUNNING:
+                case Constants.ACTIVITY_TYPE_WALKING:
                     mHistoryList.add(new HistoryItem(null, activityType, dp.getStartTime(TimeUnit.MILLISECONDS),
                             activityDuration, 0, null));
                     break;
                 case Constants.ACTIVITY_TYPE_STILL: //not moving activity
-                case Constants.ACTIVITY_TYPE_WALKING: //skip walking activity summary
                 case Constants.ACTIVITY_TYPE_UNKNOWN: //skip unknown activity
                     break;
                 default:
