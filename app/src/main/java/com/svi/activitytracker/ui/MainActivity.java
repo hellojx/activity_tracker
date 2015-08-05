@@ -2,17 +2,15 @@ package com.svi.activitytracker.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.DatePicker;
 import android.widget.ListView;
+import android.widget.Toast;
 
-import com.svi.activitytracker.FitPagerAdapter;
-import com.svi.activitytracker.ItemFragment;
 import com.svi.activitytracker.R;
-import com.svi.activitytracker.common.Constants;
 import com.svi.activitytracker.common.Display;
-import com.svi.activitytracker.common.InMemoryLog;
 import com.svi.activitytracker.lib.Client;
 import com.svi.activitytracker.lib.History;
 import com.svi.activitytracker.lib.Recording;
@@ -21,12 +19,10 @@ import com.svi.activitytracker.lib.Sensors;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class MainActivity extends AppCompatActivity implements ItemFragment.LogProvider {
+public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getName();
 
-    private ViewPager viewPager;
-    private FitPagerAdapter pagerAdapter;
     private Client client;
     private Sensors sensors;
     private Recording recording;
@@ -57,32 +53,22 @@ public class MainActivity extends AppCompatActivity implements ItemFragment.LogP
             }
         });
 
-        viewPager = (ViewPager)findViewById(R.id.viewPager);
-        pagerAdapter = new FitPagerAdapter(getSupportFragmentManager());
-        viewPager.setAdapter(pagerAdapter);
-
         display.show("client initialization");
         client = new Client(this,
                 new Client.Connection() {
                     @Override
                     public void onConnected() {
                         display.show("client connected");
-//                we can call specific api only after GoogleApiClient connection succeeded
-
 //                        sensors demo
                         initSensors();
                         display.show("list datasources");
                         sensors.listDatasourcesAndSubscribe();
 
 //                        recording demo
-                        pagerAdapter.getItem(FitPagerAdapter.FragmentIndex.RECORDING);
                         recording = new Recording(client.getClient(), new Display(Recording.class.getName()) {
                             @Override
                             public void show(String msg) {
                                 log(msg);
-
-                                add(FitPagerAdapter.FragmentIndex.RECORDING, msg);
-//                                InMemoryLog.getInstance().add(FitPagerAdapter.FragmentIndex.RECORDING, msg);
                             }
                         });
                         recording.subscribe();
@@ -93,9 +79,6 @@ public class MainActivity extends AppCompatActivity implements ItemFragment.LogP
                             @Override
                             public void show(String msg) {
                                 log(msg);
-
-                                add(FitPagerAdapter.FragmentIndex.HISTORY, msg);
-//                                InMemoryLog.getInstance().add(FitPagerAdapter.FragmentIndex.HISTORY, msg);
                             }
                         });
                         //history.readWeekBefore(new Date());
@@ -152,51 +135,38 @@ public class MainActivity extends AppCompatActivity implements ItemFragment.LogP
                     public void onDatasourcesListed() {
                         display.show("datasources listed");
                         ArrayList<String> datasources = sensors.getDatasources();
-                        for (String d:datasources) {
+                        for (String d : datasources) {
                             display.show(d);
                         }
-
-                        clear(FitPagerAdapter.FragmentIndex.DATASOURCES);
-                        addAll(FitPagerAdapter.FragmentIndex.DATASOURCES, datasources);
                     }
                 },
                 new Display(Sensors.class.getName()) {
                     @Override
                     public void show(String msg) {
                         log(msg);
-                        add(FitPagerAdapter.FragmentIndex.SENSORS, msg);
                     }
                 });
     }
 
-    private void add(int fragId, String msg) {
-        InMemoryLog.getInstance().add(fragId, msg);
-        Intent intent = new Intent();
-        intent.setAction(Constants.Action.ADD);
-        intent.putExtra(Constants.FRAG_ID, fragId);
-        intent.putExtra(Constants.DATA, msg);
-        sendBroadcast(intent);
-    }
-
-    private void addAll(int fragId, ArrayList<String> data) {
-        InMemoryLog.getInstance().addAll(fragId, data);
-        Intent intent = new Intent();
-        intent.setAction(Constants.Action.ADD_ALL);
-        intent.putExtra(Constants.FRAG_ID, fragId);
-        intent.putStringArrayListExtra(Constants.DATA, data);
-        sendBroadcast(intent);
-    }
-
-    private void clear(int fragId) {
-        InMemoryLog.getInstance().clear(fragId);
-        Intent intent = new Intent();
-        intent.setAction(Constants.Action.CLEAR);
-        intent.putExtra(Constants.FRAG_ID, fragId);
-        sendBroadcast(intent);
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
     }
 
     @Override
-    public InMemoryLog getLog() {
-        return InMemoryLog.getInstance();
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_manage:
+                startActivity(new Intent(getApplicationContext(), ManageActivity.class));
+                return true;
+            case R.id.action_logout:
+                Toast.makeText(getApplicationContext(), "Logout pressed...", Toast.LENGTH_SHORT).show();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
+
+
 }

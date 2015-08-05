@@ -1,36 +1,31 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/main_toolbar"
+        style="@style/Widget.ActivityTracker.ActionBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        app:contentInsetEnd="0dp"
+        app:contentInsetStart="0dp" />
 
     <DatePicker
         android:id="@+id/date_to_show"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:calendarViewShown="false"/>
+        android:calendarViewShown="false" />
 
     <ListView
         android:id="@+id/history_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"/>
-
-
-<android.support.v4.view.ViewPager
-    android:id="@+id/viewPager"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:visibility="gone">
-
-    <android.support.v4.view.PagerTitleStrip
-        android:background="@android:color/holo_orange_dark"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top" />
-
-</android.support.v4.view.ViewPager>
+        android:paddingBottom="8dp"
+        android:paddingTop="8dp" />
 
 </LinearLayout>
