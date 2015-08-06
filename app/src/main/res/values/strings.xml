@@ -27,4 +27,7 @@
     <string name="activity_biking">Biking</string> 
     <string name="activity_running">Running</string> 
     <string name="activity_unknown">Unknown Activity</string>
+
+    <!--Activity List Screen-->
+    <string name="no_activities_for_the_day">No activities for the day</string>
 </resources>

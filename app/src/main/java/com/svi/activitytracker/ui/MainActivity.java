@@ -1,5 +1,7 @@
 package com.svi.activitytracker.ui;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -10,7 +12,11 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.svi.activitytracker.R;
+import com.svi.activitytracker.common.Constants;
 import com.svi.activitytracker.common.Display;
+import com.svi.activitytracker.fragment.AbsActivityFragment;
+import com.svi.activitytracker.fragment.ActivityDetailfragment;
+import com.svi.activitytracker.fragment.ActivityListFragment;
 import com.svi.activitytracker.lib.Client;
 import com.svi.activitytracker.lib.History;
 import com.svi.activitytracker.lib.Recording;
@@ -22,6 +28,10 @@ import java.util.Date;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getName();
+
+    private AbsActivityFragment mActivityListFragment;
+    private AbsActivityFragment mActivityDetailsFragment;
+    private AbsActivityFragment mSelectedFragment;
 
     private Client client;
     private Sensors sensors;
@@ -36,12 +46,19 @@ public class MainActivity extends AppCompatActivity {
     private DatePicker mDatePicker;
     private ListView mHistoryView;
 
+    public Client getClient() {
+        return client;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mDatePicker = (DatePicker) findViewById(R.id.date_to_show);
+
+
+
+        /*mDatePicker = (DatePicker) findViewById(R.id.date_to_show);
         mHistoryView = (ListView) findViewById(R.id.history_view);
         Date date = new Date();
         mDatePicker.init(date.getYear() + 1900, date.getMonth(), date.getDate(), new DatePicker.OnDateChangedListener() {
@@ -51,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
                     history.getHistory(year, monthOfYear, dayOfMonth, mHistoryView);
                 }
             }
-        });
+        });*/
 
         display.show("client initialization");
         client = new Client(this,
@@ -75,15 +92,17 @@ public class MainActivity extends AppCompatActivity {
                         recording.listSubscriptions();
 
 //                        history demo
-                        history = new History(MainActivity.this, client.getClient(), new Display(History.class.getName()) {
+                        /*history = new History(MainActivity.this, client.getClient(), new Display(History.class.getName()) {
                             @Override
                             public void show(String msg) {
                                 log(msg);
                             }
-                        });
+                        });*/
                         //history.readWeekBefore(new Date());
-                        Date date = new Date();
-                        history.getHistory(date.getYear() + 1900, date.getMonth(), date.getDate(), mHistoryView);
+                        //Date date = new Date();
+                        //history.getHistory(date.getYear() + 1900, date.getMonth(), date.getDate(), mHistoryView);
+
+                        changeFragment(Constants.FRAGMENT_ACTIVITY_LIST, null);
                     }
                 },
                 new Display(Client.class.getName()) {
@@ -92,6 +111,43 @@ public class MainActivity extends AppCompatActivity {
                         log(msg);
                     }
                 });
+
+
+    }
+
+    public void changeFragment(int fragmentId, Bundle data) {
+        AbsActivityFragment fragment = null;
+        String tag = null;
+        switch (fragmentId) {
+            case Constants.FRAGMENT_ACTIVITY_LIST:
+                if (mActivityListFragment == null) {
+                    mActivityListFragment = new ActivityListFragment();
+                }
+                mActivityListFragment.updateArguments(data);
+                fragment = mActivityListFragment;
+                tag = Constants.FRAGMENT_ACTIVITY_LIST_TAG;
+                break;
+            case Constants.FRAGMENT_ACTIVITY_DETAILS:
+                if (mActivityDetailsFragment == null) {
+                    mActivityDetailsFragment = new ActivityDetailfragment();
+                }
+                mActivityDetailsFragment.updateArguments(data);
+                fragment = mActivityDetailsFragment;
+                tag = Constants.FRAGMENT_ACTIVITY_DETAILS_TAG;
+                break;
+        }
+        if (fragment == null || mSelectedFragment == fragment) {
+            return;
+        }
+        final FragmentManager fm = getFragmentManager();
+        final FragmentTransaction ft = fm.beginTransaction();
+        mSelectedFragment = fragment;
+        if (!fragment.isAdded()) {
+            ft.add(R.id.fragment_container, fragment, tag)
+                    .show(fragment)
+                    .addToBackStack("bs")
+                    .commit();
+        }
     }
 
     @Override
