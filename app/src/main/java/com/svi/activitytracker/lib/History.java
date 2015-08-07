@@ -2,6 +2,7 @@ package com.svi.activitytracker.lib;
 
 import android.content.Context;
 import android.location.Location;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,10 +38,10 @@ import java.util.concurrent.TimeUnit;
 public class History {
     private GoogleApiClient client;
     private Display display;
-    private ListView currentHistoryView;
+    private RecyclerView currentHistoryView;
     private ArrayList<HistoryItem> mHistoryList = new ArrayList<>();
-    private HistoryAdapter adapter = new HistoryAdapter();
     private Context mContext;
+    private HistoryGotListener mHistoryGotListener;
 
     public History(Context context, GoogleApiClient client, Display display) {
         this.client = client;
@@ -101,12 +102,13 @@ public class History {
                         }
                     }
                 }
-
-                adapter.setHistoryList(mHistoryList);
-                adapter.notifyDataSetChanged();
-
+                mHistoryGotListener.historyGot(mHistoryList);
             }
         });
+    }
+
+    public interface HistoryGotListener {
+        void historyGot(ArrayList<HistoryItem> list);
     }
 
     public void describeDataPoint(DataPoint dp, DateFormat dateFormat) {
@@ -167,12 +169,9 @@ public class History {
         display.show(msg);
     }
 
-    public void getHistory(int year, int monthOfYear, int dayOfMonth, final ListView listview) {
+    public void getHistory(int year, int monthOfYear, int dayOfMonth, final HistoryGotListener listener) {
 
-        adapter.notifyDataSetChanged();
-        currentHistoryView = listview;
-        currentHistoryView.setAdapter(adapter);
-
+        mHistoryGotListener = listener;
 
         Calendar cal = Calendar.getInstance();
         cal.set(year, monthOfYear, dayOfMonth, 23, 59, 59);
@@ -185,7 +184,7 @@ public class History {
         read(startTime, endTime);
     }
 
-    private class HistoryItem {
+    public class HistoryItem {
         public String description;
         public int activityType;
         public long time;
@@ -202,76 +201,5 @@ public class History {
         }
     }
 
-    private class HistoryAdapter extends BaseAdapter {
 
-
-        private ArrayList<HistoryItem> mHistoryList;
-
-        public HistoryAdapter() {
-        }
-
-        public void setHistoryList(ArrayList<HistoryItem> historyList) {
-            mHistoryList = historyList;
-        }
-
-        @Override
-        public int getCount() {
-            if (mHistoryList == null) {
-                return 0;
-            }
-            return mHistoryList.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return null;
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return 0;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            if (convertView == null) {
-                convertView = ((LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.history_item, null);
-            }
-
-            HistoryItem item = mHistoryList.get(position);
-            if (item.description != null) {
-                ((TextView) convertView.findViewById(R.id.activity_type)).setText(item.description);
-                ((TextView) convertView.findViewById(R.id.activity_time_interval)).setText("");
-                ((TextView) convertView.findViewById(R.id.activity_time)).setText("");
-                ((TextView) convertView.findViewById(R.id.activity_distance)).setText("");
-            } else {
-                final DateFormat dateFormat = new SimpleDateFormat("HH:mm");
-                String date = dateFormat.format(item.time);
-
-                int activityName = R.string.activity_unknown;
-                switch (item.activityType) {
-                    case Constants.ACTIVITY_TYPE_WALKING:
-                        activityName = R.string.activity_walking;
-                        break;
-                    case Constants.ACTIVITY_TYPE_IN_VEHICLE:
-                        activityName = R.string.activity_in_vehicle;
-                        break;
-                    case Constants.ACTIVITY_TYPE_BIKING:
-                        activityName = R.string.activity_biking;
-                        break;
-                    case Constants.ACTIVITY_TYPE_RUNNING:
-                        activityName = R.string.activity_running;
-                        break;
-                }
-
-
-                ((TextView) convertView.findViewById(R.id.activity_type)).setText(activityName);
-                ((TextView) convertView.findViewById(R.id.activity_time_interval)).setText(TimeUnit.MILLISECONDS.toMinutes(item.timeInterval) + " minutes");
-                ((TextView) convertView.findViewById(R.id.activity_time)).setText(date);
-                ((TextView) convertView.findViewById(R.id.activity_distance)).setText(item.distance == 0 ? "" : item.distance + " steps");
-            }
-
-            return convertView;
-        }
-    }
 }

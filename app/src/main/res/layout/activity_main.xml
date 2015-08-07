@@ -4,16 +4,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/main_toolbar"
-        style="@style/Widget.ActivityTracker.ActionBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        android:minHeight="?attr/actionBarSize"
-        app:contentInsetEnd="0dp"
-        app:contentInsetStart="0dp" />
 
+    <RelativeLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </RelativeLayout>
+<!--
     <DatePicker
         android:id="@+id/date_to_show"
         android:layout_width="match_parent"
@@ -27,5 +24,5 @@
         android:layout_weight="1"
         android:paddingBottom="8dp"
         android:paddingTop="8dp" />
-
+-->
 </LinearLayout>

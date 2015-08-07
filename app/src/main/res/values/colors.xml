@@ -17,4 +17,8 @@
 
     <color name="red_btn">#de4b3e</color>
     <color name="red_btn_pressed_bg">#d4362a</color>
+
+
+    <color name="color_calendar_bg">#20BBFB</color>
+    <color name="toolbar_color">#35C2FC</color>
 </resources>

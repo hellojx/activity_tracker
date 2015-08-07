@@ -24,6 +24,8 @@ public class Recording {
         subscribe(DataType.TYPE_STEP_COUNT_DELTA);
         subscribe(DataType.TYPE_DISTANCE_DELTA);
         subscribe(DataType.TYPE_ACTIVITY_SEGMENT);
+        subscribe(DataType.TYPE_CYCLING_PEDALING_CADENCE);
+        subscribe(DataType.TYPE_LOCATION_SAMPLE);
     }
 
     public void subscribe(DataType dataType) {
