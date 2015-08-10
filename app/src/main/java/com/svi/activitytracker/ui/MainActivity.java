@@ -113,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
                 });
 
 
+        getFragmentManager().addOnBackStackChangedListener(getListener());
     }
 
     public void changeFragment(int fragmentId, Bundle data) {
@@ -147,6 +148,36 @@ public class MainActivity extends AppCompatActivity {
                     .show(fragment)
                     .addToBackStack("bs")
                     .commit();
+        }
+    }
+
+    private AbsActivityFragment getCurrentFragment() {
+        return (AbsActivityFragment) getFragmentManager().findFragmentById(R.id.fragment_container);
+    }
+
+    private FragmentManager.OnBackStackChangedListener getListener()
+    {
+        FragmentManager.OnBackStackChangedListener result = new FragmentManager.OnBackStackChangedListener()
+        {
+            public void onBackStackChanged()
+            {
+                mSelectedFragment = getCurrentFragment();
+            }
+        };
+
+        return result;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mSelectedFragment == null) {
+            return;
+        }
+        mSelectedFragment = null;
+        if (getFragmentManager().getBackStackEntryCount() == 1) {
+            super.onBackPressed();
+        } else {
+            getFragmentManager().popBackStack();
         }
     }
 
