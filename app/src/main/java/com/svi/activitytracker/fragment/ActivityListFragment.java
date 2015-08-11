@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.svi.activitytracker.R;
 import com.svi.activitytracker.common.Constants;
 import com.svi.activitytracker.common.Display;
+import com.svi.activitytracker.common.Utils;
 import com.svi.activitytracker.lib.History;
 import com.svi.activitytracker.ui.MainActivity;
 
@@ -137,24 +138,7 @@ public class ActivityListFragment extends AbsActivityFragment {
                 final DateFormat dateFormat = new SimpleDateFormat("HH:mm");
                 String date = dateFormat.format(item.startTime);
 
-                int activityName = R.string.activity_unknown;
-                switch (item.activityType) {
-                    case Constants.ACTIVITY_TYPE_WALKING:
-                        activityName = R.string.activity_walking;
-                        break;
-                    case Constants.ACTIVITY_TYPE_IN_VEHICLE:
-                        activityName = R.string.activity_in_vehicle;
-                        break;
-                    case Constants.ACTIVITY_TYPE_BIKING:
-                        activityName = R.string.activity_biking;
-                        break;
-                    case Constants.ACTIVITY_TYPE_RUNNING:
-                        activityName = R.string.activity_running;
-                        break;
-                }
-
-
-                activityListViewHolder.mActivityType.setText(activityName);
+                activityListViewHolder.mActivityType.setText(Utils.getActivityName(item.activityType));
                 activityListViewHolder.mActivityTimeInerval.setText(TimeUnit.MILLISECONDS.toMinutes(item.timeInterval) + " minutes");
                 activityListViewHolder.mActivityTime.setText(date);
                 activityListViewHolder.mActivityDistance.setText(item.distance == 0 ? "" : item.distance + " steps");

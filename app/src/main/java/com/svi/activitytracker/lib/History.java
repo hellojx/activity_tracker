@@ -14,7 +14,6 @@ import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.request.DataReadRequest;
 import com.google.android.gms.fitness.result.DataReadResult;
-
 import com.svi.activitytracker.common.Constants;
 import com.svi.activitytracker.common.Display;
 
@@ -78,13 +77,12 @@ public class History {
                         List<DataSet> dataSets = bucket.getDataSets();
                         for (DataSet dataSet : dataSets) {
                             //display.show("dataSet.dataType: " + dataSet.getDataType().getName());
-
                             for (DataPoint dp : dataSet.getDataPoints()) {
                                 describeDataPoint(dp, dateFormat);
                             }
                         }
                     }
-                } else if (dataReadResult.getDataSets().size() > 0) {
+                } /*else if (dataReadResult.getDataSets().size() > 0) {
                     //display.show("dataSet.size(): " + dataReadResult.getDataSets().size());
                     for (DataSet dataSet : dataReadResult.getDataSets()) {
                         display.show("dataType: " + dataSet.getDataType().getName());
@@ -93,7 +91,7 @@ public class History {
                             describeDataPoint(dp, dateFormat);
                         }
                     }
-                }
+                }*/
                 mHistoryGotListener.historyGot(mHistoryList);
             }
         });
@@ -148,6 +146,7 @@ public class History {
                 case Constants.ACTIVITY_TYPE_BIKING:
                 case Constants.ACTIVITY_TYPE_RUNNING:
                 case Constants.ACTIVITY_TYPE_WALKING:
+                case Constants.ACTIVITY_TYPE_SWIMMING:
                     mHistoryList.add(new HistoryItem(null, activityType, dp.getStartTime(TimeUnit.MILLISECONDS),
                             dp.getEndTime(TimeUnit.MILLISECONDS), activityDuration, 0, null));
                     break;

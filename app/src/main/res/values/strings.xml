@@ -26,6 +26,7 @@
      <string name="activity_in_vehicle">In Vehicle</string> 
     <string name="activity_biking">Biking</string> 
     <string name="activity_running">Running</string> 
+    <string name="activity_swimming">Swimming</string> 
     <string name="activity_unknown">Unknown Activity</string>
 
     <!--Activity List Screen-->
