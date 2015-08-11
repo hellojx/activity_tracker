@@ -4,9 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.svi.activitytracker.R;
 import com.svi.activitytracker.view.CustomImageView;
@@ -68,10 +66,10 @@ public class ManageActivity extends AppCompatActivity implements View.OnClickLis
         activityWalking.setImageResource(R.drawable.walking);
         activityDriving.setImageResource(R.drawable.driving_a_car_not_selected);
         activityRidingBus.setImageResource(R.drawable.riding_a_bus_not_selected);
-        activityCycling.setImageResource(R.drawable.cycling);
-        activityRunning.setImageResource(R.drawable.running);
-        activitySwimming.setImageResource(R.drawable.swimming);
-        activityBasketball.setImageResource(R.drawable.basketball);
+        activityCycling.setImageResource(R.drawable.cycling_not_selected);
+        activityRunning.setImageResource(R.drawable.running_not_selected);
+        activitySwimming.setImageResource(R.drawable.swimming_not_selected);
+        activityBasketball.setImageResource(R.drawable.basketball_not_selected);
         activityRidingTrain.setImageResource(R.drawable.riding_a_train_not_selected);
     }
 
@@ -107,15 +105,15 @@ public class ManageActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.activityCycling:
                 drawable = R.drawable.cycling;
                 if(activityCycling.getResourceId() == drawable){ // deactivate cycling
-                    activityRidingBus.setImageResource(R.drawable.cycling);
+                    activityCycling.setImageResource(R.drawable.cycling_not_selected);
                 } else { // activate cycling
-                    activityRidingBus.setImageResource(R.drawable.cycling);
+                    activityCycling.setImageResource(R.drawable.cycling);
                 }
                 break;
             case R.id.activityRunning:
                 drawable = R.drawable.running;
                 if(activityRunning.getResourceId() == drawable){ // deactivate running
-                    activityRunning.setImageResource(R.drawable.running);
+                    activityRunning.setImageResource(R.drawable.running_not_selected);
                 } else { // activate running
                     activityRunning.setImageResource(R.drawable.running);
                 }
@@ -123,7 +121,7 @@ public class ManageActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.activitySwimming:
                 drawable = R.drawable.swimming;
                 if(activitySwimming.getResourceId() == drawable){ // deactivate swimming
-                    activitySwimming.setImageResource(R.drawable.swimming);
+                    activitySwimming.setImageResource(R.drawable.swimming_not_selected);
                 } else { // activate swimming
                     activitySwimming.setImageResource(R.drawable.swimming);
                 }
@@ -131,7 +129,7 @@ public class ManageActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.activityBasketball:
                 drawable = R.drawable.basketball;
                 if(activityBasketball.getResourceId() == drawable){ // deactivate basketball
-                    activityBasketball.setImageResource(R.drawable.basketball);
+                    activityBasketball.setImageResource(R.drawable.basketball_not_selected);
                 } else { // activate basketball
                     activityBasketball.setImageResource(R.drawable.basketball);
                 }

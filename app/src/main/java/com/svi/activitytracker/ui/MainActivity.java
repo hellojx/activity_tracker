@@ -55,9 +55,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-
-
         /*mDatePicker = (DatePicker) findViewById(R.id.date_to_show);
         mHistoryView = (ListView) findViewById(R.id.history_view);
         Date date = new Date();
