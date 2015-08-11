@@ -1,7 +1,6 @@
 package com.svi.activitytracker.fragment;
 
 import android.app.DatePickerDialog;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -109,6 +108,20 @@ public class ActivityListFragment extends AbsActivityFragment {
 
             View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.history_item, viewGroup, false);
             ActivityListViewHolder holder = new ActivityListViewHolder(view);
+
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int pos = mActivityList.getChildAdapterPosition(v);
+                    History.HistoryItem item = mHistoryList.get(pos);
+                    Bundle b = new Bundle();
+                    b.putLong("startTime", item.startTime);
+                    b.putLong("endTime", item.endTime);
+                    b.putInt("activityType", item.activityType);
+                    ((MainActivity) getActivity()).changeFragment(Constants.FRAGMENT_ACTIVITY_DETAILS, b);
+                }
+            });
+
             return holder;
         }
 
@@ -122,7 +135,7 @@ public class ActivityListFragment extends AbsActivityFragment {
                 activityListViewHolder.mActivityDistance.findViewById(R.id.activity_distance);
             } else {
                 final DateFormat dateFormat = new SimpleDateFormat("HH:mm");
-                String date = dateFormat.format(item.time);
+                String date = dateFormat.format(item.startTime);
 
                 int activityName = R.string.activity_unknown;
                 switch (item.activityType) {

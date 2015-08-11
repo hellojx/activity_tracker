@@ -3,17 +3,10 @@ package com.svi.activitytracker.lib;
 import android.content.Context;
 import android.location.Location;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.fitness.Fitness;
-import com.google.android.gms.fitness.FitnessActivities;
 import com.google.android.gms.fitness.data.Bucket;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
@@ -22,7 +15,6 @@ import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.request.DataReadRequest;
 import com.google.android.gms.fitness.result.DataReadResult;
 
-import com.svi.activitytracker.R;
 import com.svi.activitytracker.common.Constants;
 import com.svi.activitytracker.common.Display;
 
@@ -124,6 +116,7 @@ public class History {
             msg += " walking\nat " + startTime + "\n";
 
             mHistoryList.add(new HistoryItem(null, Constants.ACTIVITY_TYPE_WALKING, dp.getStartTime(TimeUnit.MILLISECONDS),
+                    dp.getEndTime(TimeUnit.MILLISECONDS),
                     dp.getEndTime(TimeUnit.MILLISECONDS) - dp.getStartTime(TimeUnit.MILLISECONDS),
                     steps, null));
 
@@ -156,13 +149,13 @@ public class History {
                 case Constants.ACTIVITY_TYPE_RUNNING:
                 case Constants.ACTIVITY_TYPE_WALKING:
                     mHistoryList.add(new HistoryItem(null, activityType, dp.getStartTime(TimeUnit.MILLISECONDS),
-                            activityDuration, 0, null));
+                            dp.getEndTime(TimeUnit.MILLISECONDS), activityDuration, 0, null));
                     break;
                 case Constants.ACTIVITY_TYPE_STILL: //not moving activity
                 case Constants.ACTIVITY_TYPE_UNKNOWN: //skip unknown activity
                     break;
                 default:
-                    mHistoryList.add(new HistoryItem(msg, 0, 0, 0, 0, null));
+                    mHistoryList.add(new HistoryItem(msg, 0, 0, 0, 0, 0, null));
                     break;
             }
         }
@@ -187,12 +180,14 @@ public class History {
     public class HistoryItem {
         public String description;
         public int activityType;
-        public long time;
+        public long startTime;
+        public long endTime;
         public long timeInterval;
         public long distance;
         public Location location;
-        public HistoryItem(String description, int activityType, long time, long timeInterval, long distance, Location location) {
-            this.time = time;
+        public HistoryItem(String description, int activityType, long startTime, long endTime, long timeInterval, long distance, Location location) {
+            this.startTime = startTime;
+            this.endTime = endTime;
             this.timeInterval = timeInterval;
             this.distance = distance;
             this.location = location;
