@@ -37,13 +37,110 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginBottom="20dp"
-            android:layout_marginTop="20dp"
-            android:orientation="vertical">
+            android:layout_marginTop="30dp"
+            android:orientation="vertical"
+            android:weightSum="3">
 
-            <ImageView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:src="@drawable/activities" />
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                android:weightSum="3">
+
+
+                <com.svi.activitytracker.view.CustomImageView
+                    android:id="@+id/activityWalking"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:onClick="onClick"/>
+
+                <com.svi.activitytracker.view.CustomImageView
+                    android:id="@+id/activityDriving"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:onClick="onClick"/>
+
+                <com.svi.activitytracker.view.CustomImageView
+                    android:id="@+id/activityRidingBus"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:onClick="onClick" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                android:weightSum="3">
+
+                <com.svi.activitytracker.view.CustomImageView
+                    android:id="@+id/activityCycling"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:onClick="onClick"
+                    android:src="@drawable/cycling" />
+
+                <com.svi.activitytracker.view.CustomImageView
+                    android:id="@+id/activityRunning"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:onClick="onClick"
+                    android:src="@drawable/running" />
+
+                <com.svi.activitytracker.view.CustomImageView
+                    android:id="@+id/activitySwimming"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:onClick="onClick"
+                    android:src="@drawable/swimming" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                android:weightSum="3">
+
+
+                <com.svi.activitytracker.view.CustomImageView
+                    android:id="@+id/activityBasketball"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:onClick="onClick"
+                    android:src="@drawable/basketball" />
+
+                <com.svi.activitytracker.view.CustomImageView
+                    android:id="@+id/activityRidingTrain"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:onClick="onClick"
+                    android:src="@drawable/riding_a_train_not_selected" />
+
+                <com.svi.activitytracker.view.CustomImageView
+                    android:id="@+id/activityNull"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:onClick="onClick"
+                    android:src="@null" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
@@ -62,5 +159,5 @@
         android:text="@string/text_start_tracking"
         android:textAllCaps="false"
         android:textColor="@android:color/white" />
-
+u
 </RelativeLayout>

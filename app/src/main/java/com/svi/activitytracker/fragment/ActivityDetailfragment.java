@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -24,8 +25,6 @@ import com.svi.activitytracker.ui.MainActivity;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -40,6 +39,8 @@ public class ActivityDetailfragment extends AbsActivityFragment {
     private TextView mLocationValue;
     private TextView mSpeedValue;
 
+    private Button dailyLog;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -50,6 +51,8 @@ public class ActivityDetailfragment extends AbsActivityFragment {
         mDistanceValue = (TextView) view.findViewById(R.id.distance_value);
         mLocationValue = (TextView) view.findViewById(R.id.location_value);
         mSpeedValue = (TextView) view.findViewById(R.id.speed_value);
+
+        dailyLog = (Button) view.findViewById(R.id.daily_log);
 
         mDurationValue.setText(TimeUnit.MILLISECONDS.toMinutes(mEndTime - mStartTime) + " minutes");
 
@@ -68,7 +71,6 @@ public class ActivityDetailfragment extends AbsActivityFragment {
 
         actDate.setText(date);
         actTime.setText(time);
-
 
         DataReadRequest readRequest = new DataReadRequest.Builder()
             .aggregate(DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
@@ -104,8 +106,19 @@ public class ActivityDetailfragment extends AbsActivityFragment {
             }
         });
 
-
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState){
+        super.onActivityCreated(savedInstanceState);
+
+        dailyLog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().onBackPressed();
+            }
+        });
     }
 
     public void describeDataPoint(DataPoint dp) {
@@ -129,4 +142,5 @@ public class ActivityDetailfragment extends AbsActivityFragment {
         mEndTime = data.getLong("endTime");
         mActivityType = data.getInt("activityType");
     }
+
 }

@@ -30,4 +30,6 @@
 
     <!--Activity List Screen-->
     <string name="no_activities_for_the_day">No activities for the day</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="action_settings">Settings</string>
 </resources>
