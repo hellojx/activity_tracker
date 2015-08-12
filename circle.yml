@@ -1,0 +1,17 @@
+machine:
+    environment:
+          ANDROID_HOME: /usr/local/android-sdk-linux
+          JAVA_OPTS: "-Xms256m -Xmx512m"
+
+dependencies:
+  pre:
+    - echo y | sudo /usr/local/android-sdk-linux/tools/android update sdk --no-ui --all --filter extra-android-m2repository,extra-android-support,extra-google-google_play_services,extra-google-m2repository
+
+    - wget $DEBUG_KEYSTORE_URL
+    - openssl des3 -d -pass env:DEBUG_KEYSTORE_PASSWORD -salt -in debug.keystore.encrypted  -out ~/.android/debug.keystore
+
+test:
+    override:
+       - ./gradlew assembleDebug
+    post:
+      - cp -r app/build/outputs $CIRCLE_ARTIFACTS
