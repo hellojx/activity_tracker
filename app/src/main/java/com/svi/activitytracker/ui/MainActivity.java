@@ -17,6 +17,7 @@ import com.svi.activitytracker.common.Display;
 import com.svi.activitytracker.fragment.AbsActivityFragment;
 import com.svi.activitytracker.fragment.ActivityDetailfragment;
 import com.svi.activitytracker.fragment.ActivityListFragment;
+import com.svi.activitytracker.fragment.EditFragment;
 import com.svi.activitytracker.lib.Client;
 import com.svi.activitytracker.lib.History;
 import com.svi.activitytracker.lib.Recording;
@@ -31,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
 
     private AbsActivityFragment mActivityListFragment;
     private AbsActivityFragment mActivityDetailsFragment;
+    private AbsActivityFragment mActivityEditFragment;
     private AbsActivityFragment mSelectedFragment;
 
     private Client client;
@@ -132,6 +134,14 @@ public class MainActivity extends AppCompatActivity {
                 mActivityDetailsFragment.updateArguments(data);
                 fragment = mActivityDetailsFragment;
                 tag = Constants.FRAGMENT_ACTIVITY_DETAILS_TAG;
+                break;
+            case Constants.FRAGMENT_ACTIVITY_EDIT:
+                if (mActivityEditFragment == null) {
+                    mActivityEditFragment = new EditFragment();
+                }
+                mActivityEditFragment.updateArguments(data);
+                fragment = mActivityEditFragment;
+                tag = Constants.FRAGMENT_ACTIVITY_EDIT_TAG;
                 break;
         }
         if (fragment == null || mSelectedFragment == fragment) {

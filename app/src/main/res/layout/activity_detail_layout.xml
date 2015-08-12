@@ -7,7 +7,7 @@
     android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/clacks_home_toolbar"
+        android:id="@+id/activity_details_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/toolbar_color"
@@ -21,6 +21,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="19dp"/>
+
+    <TextView
+        android:id="@+id/step_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:visibility="gone"
+        android:paddingTop="10dp" />
 
     <TextView
         android:id="@+id/activity_date"
@@ -144,6 +153,7 @@
                     android:id="@+id/location_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
                     android:textColor="#2E3137"
                     android:layout_marginTop="8dp"/>
 

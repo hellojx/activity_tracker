@@ -18,13 +18,16 @@ public class Constants {
     public static final int ACTIVITY_TYPE_UNKNOWN = 4;
     public static final int ACTIVITY_TYPE_BIKING = 1;
     public static final int ACTIVITY_TYPE_RUNNING = 8;
+    public static final int ACTIVITY_TYPE_SWIMMING = 82;
 
     //fragments
     public static final int FRAGMENT_ACTIVITY_LIST = 1;
     public static final int FRAGMENT_ACTIVITY_DETAILS = 2;
+    public static final int FRAGMENT_ACTIVITY_EDIT = 3;
 
     public static final String FRAGMENT_ACTIVITY_LIST_TAG = "list";
     public static final String FRAGMENT_ACTIVITY_DETAILS_TAG = "details";
+    public static final String FRAGMENT_ACTIVITY_EDIT_TAG = "edit";
 
 
 }
