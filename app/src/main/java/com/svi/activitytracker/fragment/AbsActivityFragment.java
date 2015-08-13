@@ -21,24 +21,4 @@ public abstract class AbsActivityFragment extends Fragment {
 
     public void updateArguments(Bundle data) {}
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // Do something that differs the Activity's menu here
-        inflater.inflate(R.menu.menu_main, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_manage:
-                startActivity(new Intent(getActivity(), ManageActivity.class));
-                return true;
-            case R.id.action_logout:
-                Toast.makeText(getActivity(), "Logout pressed...", Toast.LENGTH_SHORT).show();
-                return true;
-        }
-        return true;
-    }
-
 }

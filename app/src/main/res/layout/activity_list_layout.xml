@@ -6,7 +6,7 @@
               android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/clacks_home_toolbar"
+        android:id="@+id/list_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/toolbar_color"
@@ -55,7 +55,6 @@
 
         </LinearLayout>
 
-
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -74,17 +73,13 @@
                 android:layout_height="match_parent"
                 android:scrollbars="vertical"/>
 
-            <TextView
-                android:id="@+id/empty_list_item"
-                fontPath="fonts/roboto_medium.ttf"
+            <LinearLayout
+                android:id="@+id/activityEmptyView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="@string/no_activities_for_the_day"
-                android:textColor="@android:color/black"
-                android:textSize="18sp"
-                android:visibility="gone"
-                tools:ignore="MissingPrefix" />
+                android:layout_height="match_parent">
+
+                <include layout="@layout/layout_activity_empty"/>
+            </LinearLayout>
 
         </RelativeLayout>
 
