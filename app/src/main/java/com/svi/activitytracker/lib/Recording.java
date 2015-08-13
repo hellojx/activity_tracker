@@ -26,6 +26,7 @@ public class Recording {
         subscribe(DataType.TYPE_ACTIVITY_SEGMENT);
         subscribe(DataType.TYPE_CYCLING_PEDALING_CADENCE);
         subscribe(DataType.TYPE_LOCATION_SAMPLE);
+        subscribe(DataType.TYPE_SPEED);
     }
 
     public void subscribe(DataType dataType) {

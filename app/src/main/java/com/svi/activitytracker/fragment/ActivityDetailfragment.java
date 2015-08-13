@@ -1,7 +1,9 @@
 package com.svi.activitytracker.fragment;
 
+import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -14,10 +16,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.fitness.data.Bucket;
 import com.google.android.gms.fitness.data.DataPoint;
@@ -25,6 +30,7 @@ import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataSource;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
+import com.google.android.gms.fitness.request.DataDeleteRequest;
 import com.google.android.gms.fitness.request.DataReadRequest;
 import com.google.android.gms.fitness.result.DataReadResult;
 import com.google.android.gms.maps.CameraUpdate;
@@ -51,6 +57,8 @@ import java.util.concurrent.TimeUnit;
 public class ActivityDetailfragment extends AbsActivityFragment
         implements OnMapReadyCallback {
 
+    private static final String TAG = ActivityDetailfragment.class.getSimpleName();
+
     private static String MAP_FRAGMENT_TAG = "map_fragment";
 
     private GoogleMap mGoogleMap;
@@ -69,6 +77,11 @@ public class ActivityDetailfragment extends AbsActivityFragment
 
     private ArrayList<LatLng> mLocationList = new ArrayList<>();
 
+    private DataSet mAcyivitySummarySet;
+    private GoogleApiClient mClient;
+
+    private ActivitySelectorDialogFragment mActivitySelectorDialogFragment;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -76,6 +89,8 @@ public class ActivityDetailfragment extends AbsActivityFragment
         View view = inflater.inflate(R.layout.activity_detail_layout, container, false);
 
         AppCompatActivity activity = (AppCompatActivity) getActivity();
+
+        mClient = ((MainActivity) activity).getClient().getClient();
         FragmentManager fm = activity.getFragmentManager();
         Fragment fragment = fm.findFragmentByTag(MAP_FRAGMENT_TAG);
         if (fragment != null) {
@@ -83,12 +98,14 @@ public class ActivityDetailfragment extends AbsActivityFragment
             transaction.remove(fragment);
         }
 
+        final RelativeLayout activityMap = (RelativeLayout) view.findViewById(R.id.activity_map);
+        activityMap.setVisibility(View.INVISIBLE);
+
         MapFragment mapFragment = MapFragment.newInstance();
         FragmentTransaction transaction = fm.beginTransaction();
         transaction.add(R.id.map_container, mapFragment, MAP_FRAGMENT_TAG).commit();
 
         mapFragment.getMapAsync(this);
-
 
         /*Toolbar toolbar = (Toolbar) view.findViewById(R.id.activity_details_toolbar);
         toolbar.inflateMenu(R.menu.menu_details);
@@ -179,6 +196,7 @@ public class ActivityDetailfragment extends AbsActivityFragment
                         .read(DataType.TYPE_DISTANCE_DELTA)
                         .read(DataType.TYPE_LOCATION_SAMPLE)
                         .read(DataType.TYPE_SPEED)
+                        .read(DataType.TYPE_ACTIVITY_SEGMENT)
                         .setTimeRange(mStartTime, mEndTime, TimeUnit.MILLISECONDS)
                         .build();
 
@@ -186,20 +204,47 @@ public class ActivityDetailfragment extends AbsActivityFragment
             @Override
             public void onResult(DataReadResult dataReadResult) {
 
+
                 for (DataSet dataSet : dataReadResult.getDataSets()) {
 
-                    for (DataPoint dp : dataSet.getDataPoints()) {
-                        describeDataPoint(dp);
+                    if (dataSet.getDataType().equals(DataType.TYPE_ACTIVITY_SEGMENT)) {
+
+                        mAcyivitySummarySet = dataSet;
+                    } else {
+                        for (DataPoint dp : dataSet.getDataPoints()) {
+                            describeDataPoint(dp);
+                        }
                     }
                 }
 
-                if (mGoogleMap != null) {
-                    addMarkers();
+                if (mLocationList.size() > 0) {
+                    activityMap.setVisibility(View.VISIBLE);
+                    if (mGoogleMap != null) {
+                        addMarkers();
+                    }
                 }
             }
         });
 
+        mActivitySelectorDialogFragment = new ActivitySelectorDialogFragment();
+
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch(requestCode) {
+            case 100:
+
+                if (resultCode == Activity.RESULT_OK) {
+
+                    int newActType = data.getIntExtra("activity_type", -1);
+                    editActivityType(newActType);
+                } else if (resultCode == Activity.RESULT_CANCELED){
+                }
+
+                break;
+        }
     }
 
     @Override
@@ -269,8 +314,7 @@ public class ActivityDetailfragment extends AbsActivityFragment
             builder.include(latLng);
         }
         LatLngBounds bounds = builder.build();
-        int padding = 20;
-        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 20);
         mGoogleMap.moveCamera(cu);
 
         mLocationList.clear();
@@ -280,5 +324,50 @@ public class ActivityDetailfragment extends AbsActivityFragment
     public void onMapReady(GoogleMap googleMap) {
         mGoogleMap = googleMap;
         addMarkers();
+    }
+
+    private void editActivityType(final int activityType) {
+        if (mAcyivitySummarySet == null || mActivityType == activityType) {
+            return;
+        }
+        mActivityType = activityType;
+
+        DataDeleteRequest request = new DataDeleteRequest.Builder()
+                .setTimeInterval(mStartTime, mEndTime, TimeUnit.MILLISECONDS)
+                .addDataType(DataType.TYPE_ACTIVITY_SEGMENT)
+                .build();
+
+        Fitness.HistoryApi.deleteData(mClient, request)
+                .setResultCallback(new ResultCallback<Status>() {
+                    @Override
+                    public void onResult(Status status) {
+                        if (status.isSuccess()) {
+
+                            /*DataSource dataSource = new DataSource.Builder()
+                                    .setAppPackageName(getActivity())
+                                    .setDataType(DataType.TYPE_ACTIVITY_SEGMENT)
+                                    .setName("segment")
+                                    .setType(DataSource.TYPE_RAW)
+                                    .build();
+                            DataSet dataSet = DataSet.create(dataSource);
+
+                            for (DataPoint dp : mAcyivitySummarySet.getDataPoints()) {
+
+                                List<Field> fields = dp.getDataType().getFields();
+
+                                DataPoint dataPoint = dataSet.createDataPoint();
+                                dataPoint.getValue(fields.get(0)).setInt(activityType);
+                                //dataPoint.getValue(fields.get(1)).setInt(Integer.valueOf(dp.getValue(fields.get(1)).toString()));
+                                dataPoint.setTimeInterval(mStartTime, mEndTime, TimeUnit.MILLISECONDS);
+
+                                dataSet.add(dataPoint);
+                            }
+                            Fitness.HistoryApi.insertData(((MainActivity) getActivity()).getClient().getClient(), dataSet);*/
+
+                        } else {
+                            Log.i(TAG, "Failed to delete today's step count data");
+                        }
+                    }
+                });
     }
 }

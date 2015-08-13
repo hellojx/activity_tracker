@@ -1,58 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?android:attr/selectableItemBackground"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:paddingTop="10dp"
-    android:paddingBottom="10dp">
+    android:paddingTop="5dp"
+    android:paddingBottom="5dp"
+    android:background="?android:attr/selectableItemBackground">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <com.svi.activitytracker.view.TextViewRobotoRegular
-            android:id="@+id/activity_type"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+        <ImageView
+            android:id="@+id/activity_icon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"/>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:textSize="16sp"
-            android:textColor="@android:color/black"/>
-
-        <com.svi.activitytracker.view.TextViewRobotoRegular
-            android:id="@+id/activity_time_interval"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"/>
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_gravity="center_horizontal"
+            android:background="#DADADA"/>
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp">
+        android:orientation="vertical">
 
         <com.svi.activitytracker.view.TextViewRobotoRegular
-            android:id="@+id/activity_time"
+            android:id="@+id/activity_type"
             android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:gravity="center_vertical"
+            android:textSize="20sp"
+            android:textColor="#454545"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="14sp"/>
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/hour_glass"/>
+
+            <com.svi.activitytracker.view.TextViewRobotoRegular
+                android:id="@+id/activity_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:textColor="#9A9A9A"
+                android:textSize="14sp"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:background="#DADADA"/>
 
         <com.svi.activitytracker.view.TextViewRobotoRegular
-            android:id="@+id/activity_place"
+            android:id="@+id/activity_time_interval"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="10dp"
-            android:textSize="14sp"/>
+            android:layout_marginTop="4dp"
+            android:textSize="16sp"
+            android:textColor="#54CEFF"/>
 
-        <com.svi.activitytracker.view.TextViewRobotoRegular
-            android:id="@+id/activity_distance"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="10dp"
-            android:textSize="14sp"/>
     </LinearLayout>
 
 </LinearLayout>

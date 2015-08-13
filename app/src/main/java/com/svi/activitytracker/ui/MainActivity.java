@@ -57,18 +57,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        /*mDatePicker = (DatePicker) findViewById(R.id.date_to_show);
-        mHistoryView = (ListView) findViewById(R.id.history_view);
-        Date date = new Date();
-        mDatePicker.init(date.getYear() + 1900, date.getMonth(), date.getDate(), new DatePicker.OnDateChangedListener() {
-            @Override
-            public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                if (history != null) {
-                    history.getHistory(year, monthOfYear, dayOfMonth, mHistoryView);
-                }
-            }
-        });*/
-
         display.show("client initialization");
         client = new Client(this,
                 new Client.Connection() {
