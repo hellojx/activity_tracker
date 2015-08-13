@@ -1,6 +1,11 @@
 package com.svi.activitytracker.fragment;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,6 +27,16 @@ import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.request.DataReadRequest;
 import com.google.android.gms.fitness.result.DataReadResult;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.svi.activitytracker.R;
 import com.svi.activitytracker.common.Constants;
 import com.svi.activitytracker.common.Utils;
@@ -29,10 +44,16 @@ import com.svi.activitytracker.ui.MainActivity;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class ActivityDetailfragment extends AbsActivityFragment {
+public class ActivityDetailfragment extends AbsActivityFragment
+        implements OnMapReadyCallback {
+
+    private static String MAP_FRAGMENT_TAG = "map_fragment";
+
+    private GoogleMap mGoogleMap;
 
     private long mStartTime = -1;
     private long mEndTime = -1;
@@ -46,13 +67,30 @@ public class ActivityDetailfragment extends AbsActivityFragment {
 
     private Button dailyLog;
 
+    private ArrayList<LatLng> mLocationList = new ArrayList<>();
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.activity_detail_layout, container, false);
 
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.activity_details_toolbar);
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        FragmentManager fm = activity.getFragmentManager();
+        Fragment fragment = fm.findFragmentByTag(MAP_FRAGMENT_TAG);
+        if (fragment != null) {
+            FragmentTransaction transaction = fm.beginTransaction();
+            transaction.remove(fragment);
+        }
+
+        MapFragment mapFragment = MapFragment.newInstance();
+        FragmentTransaction transaction = fm.beginTransaction();
+        transaction.add(R.id.map_container, mapFragment, MAP_FRAGMENT_TAG).commit();
+
+        mapFragment.getMapAsync(this);
+
+
+        /*Toolbar toolbar = (Toolbar) view.findViewById(R.id.activity_details_toolbar);
         toolbar.inflateMenu(R.menu.menu_details);
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
@@ -70,7 +108,7 @@ public class ActivityDetailfragment extends AbsActivityFragment {
 
                 return true;
             }
-        });
+        });*/
 
         mDurationValue = (TextView) view.findViewById(R.id.duration_value);
         mDistanceValue = (TextView) view.findViewById(R.id.distance_value);
@@ -154,6 +192,10 @@ public class ActivityDetailfragment extends AbsActivityFragment {
                         describeDataPoint(dp);
                     }
                 }
+
+                if (mGoogleMap != null) {
+                    addMarkers();
+                }
             }
         });
 
@@ -184,6 +226,7 @@ public class ActivityDetailfragment extends AbsActivityFragment {
         } else if (dp.getDataType().equals(DataType.TYPE_LOCATION_SAMPLE)) {
             String lat = dp.getValue(Field.FIELD_LATITUDE).toString();
             String lng = dp.getValue(Field.FIELD_LONGITUDE).toString();
+            mLocationList.add(new LatLng(Double.valueOf(lat), Double.valueOf(lng)));
             Utils.getPlaceDescription(getActivity(), Float.valueOf(lat), Float.valueOf(lng), mLocationValue);
         } else if (dp.getDataType().equals(DataType.TYPE_SPEED)) {
             String speed = dp.getValue(Field.FIELD_SPEED).toString();
@@ -203,4 +246,39 @@ public class ActivityDetailfragment extends AbsActivityFragment {
         mActivityType = data.getInt("activityType");
     }
 
+    private void addMarkers() {
+        if (mGoogleMap == null || mLocationList.size() == 0) {
+            return;
+        }
+
+        if (mLocationList.size() <= 2) {
+            for (LatLng latLng : mLocationList) {
+                MarkerOptions options = new MarkerOptions().position(latLng);
+                mGoogleMap.addMarker(options);
+            }
+        } else {
+            PolylineOptions mPolylineOptions = new PolylineOptions();
+            mPolylineOptions.color(Color.RED);
+            mPolylineOptions.width(3);
+            mPolylineOptions.addAll(mLocationList);
+            mGoogleMap.addPolyline(mPolylineOptions);
+        }
+
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        for (LatLng latLng : mLocationList) {
+            builder.include(latLng);
+        }
+        LatLngBounds bounds = builder.build();
+        int padding = 20;
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+        mGoogleMap.moveCamera(cu);
+
+        mLocationList.clear();
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mGoogleMap = googleMap;
+        addMarkers();
+    }
 }
