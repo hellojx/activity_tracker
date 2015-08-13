@@ -1,15 +1,19 @@
 package com.svi.activitytracker.fragment;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.svi.activitytracker.R;
 import com.svi.activitytracker.common.Constants;
@@ -17,6 +21,7 @@ import com.svi.activitytracker.common.Display;
 import com.svi.activitytracker.common.Utils;
 import com.svi.activitytracker.lib.History;
 import com.svi.activitytracker.ui.MainActivity;
+import com.svi.activitytracker.ui.ManageActivity;
 
 import java.text.DateFormat;
 import java.text.DateFormatSymbols;
@@ -29,8 +34,10 @@ public class ActivityListFragment extends AbsActivityFragment {
 
     private RecyclerView mActivityList;
     private LinearLayout mCalendarBtn;
+    private LinearLayout mEmptyView;
     private TextView mDateText;
     private TextView mMonthText;
+    private Toolbar toolbar;
 
     private History mHistory;
     private History.HistoryGotListener mHistoryGotListener;
@@ -47,6 +54,8 @@ public class ActivityListFragment extends AbsActivityFragment {
         mDateText = (TextView) view.findViewById(R.id.date_text);
         mMonthText = (TextView) view.findViewById(R.id.month_text);
 
+        toolbar = (Toolbar) view.findViewById(R.id.list_toolbar);
+
         Date date = new Date();
         mHistory = new History(getActivity(), ((MainActivity) getActivity()).getClient().getClient(), new Display(History.class.getName()) {
             @Override
@@ -55,8 +64,15 @@ public class ActivityListFragment extends AbsActivityFragment {
             }
         });
 
-
+        mEmptyView = (LinearLayout) view.findViewById(R.id.activityEmptyView);
         mHistoryAdapter = new HistoryAdapter();
+        mHistoryAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+                checkAdapterIsEmpty();
+            }
+        });
         mHistoryGotListener = new History.HistoryGotListener() {
             @Override
             public void historyGot(ArrayList<History.HistoryItem> list) {
@@ -64,12 +80,12 @@ public class ActivityListFragment extends AbsActivityFragment {
             }
         };
         mActivityList.setAdapter(mHistoryAdapter);
+        checkAdapterIsEmpty();
 
         mHistory.getHistory(date.getYear() + 1900, date.getMonth(), date.getDate(), mHistoryGotListener);
 
         mDateText.setText(String.valueOf(date.getDate()));
         mMonthText.setText(new DateFormatSymbols().getMonths()[date.getMonth()]);
-
 
         mCalendarBtn = (LinearLayout) view.findViewById(R.id.calendar_btn);
         mCalendarBtn.setOnClickListener(new View.OnClickListener() {
@@ -93,6 +109,28 @@ public class ActivityListFragment extends AbsActivityFragment {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mActivityList.setLayoutManager(layoutManager);
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState){
+        super.onActivityCreated(savedInstanceState);
+
+        toolbar.inflateMenu(R.menu.menu_main);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_manage:
+                        startActivity(new Intent(getActivity(), ManageActivity.class));
+                        break;
+                    case R.id.action_logout:
+                        Toast.makeText(getActivity(), "Logout pressed...", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+                return true;
+            }
+        });
+
     }
 
     private class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ActivityListViewHolder> {
@@ -168,4 +206,13 @@ public class ActivityListFragment extends AbsActivityFragment {
             return mHistoryList.size();
         }
     }
+    
+    private void checkAdapterIsEmpty () {
+        if (mHistoryAdapter.getItemCount() == 0) {
+            mEmptyView.setVisibility(View.VISIBLE);
+        } else {
+            mEmptyView.setVisibility(View.GONE);
+        }
+    }
+
 }
