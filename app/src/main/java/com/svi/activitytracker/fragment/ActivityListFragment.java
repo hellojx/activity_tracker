@@ -2,7 +2,9 @@ package com.svi.activitytracker.fragment;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -115,6 +117,14 @@ public class ActivityListFragment extends AbsActivityFragment {
         final LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mActivityList.setLayoutManager(layoutManager);
+
+        Cursor c = getActivity().getApplication().getContentResolver().query(ContactsContract.Profile.CONTENT_URI, null, null, null, null);
+        c.moveToFirst();
+        String ownerName = c.getString(c.getColumnIndex("display_name"));
+        c.close();
+
+        toolbar.setTitle(ownerName);
+
         return view;
     }
 

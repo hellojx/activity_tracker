@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -107,8 +109,14 @@ public class ActivityDetailfragment extends AbsActivityFragment
 
         mapFragment.getMapAsync(this);
 
-        /*Toolbar toolbar = (Toolbar) view.findViewById(R.id.activity_details_toolbar);
-        toolbar.inflateMenu(R.menu.menu_details);
+        Toolbar toolbar = (Toolbar) view.findViewById(R.id.activity_details_toolbar);
+        Cursor c = getActivity().getApplication().getContentResolver().query(ContactsContract.Profile.CONTENT_URI, null, null, null, null);
+        c.moveToFirst();
+        String ownerName = c.getString(c.getColumnIndex("display_name"));
+        c.close();
+
+        toolbar.setTitle(ownerName);
+        /*toolbar.inflateMenu(R.menu.menu_details);
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
