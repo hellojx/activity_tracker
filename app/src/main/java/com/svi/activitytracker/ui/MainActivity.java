@@ -22,6 +22,7 @@ import com.svi.activitytracker.lib.Client;
 import com.svi.activitytracker.lib.History;
 import com.svi.activitytracker.lib.Recording;
 import com.svi.activitytracker.lib.Sensors;
+import com.svi.activitytracker.utils.ActivityUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -88,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
                         //history.readWeekBefore(new Date());
                         //Date date = new Date();
                         //history.getHistory(date.getYear() + 1900, date.getMonth(), date.getDate(), mHistoryView);
-
+                        ActivityUtils.setIsLoggedIn(getApplicationContext(), true);
                         changeFragment(Constants.FRAGMENT_ACTIVITY_LIST, null);
                     }
                 },
@@ -150,8 +151,7 @@ public class MainActivity extends AppCompatActivity {
         return (AbsActivityFragment) getFragmentManager().findFragmentById(R.id.fragment_container);
     }
 
-    private FragmentManager.OnBackStackChangedListener getListener()
-    {
+    private FragmentManager.OnBackStackChangedListener getListener(){
         FragmentManager.OnBackStackChangedListener result = new FragmentManager.OnBackStackChangedListener()
         {
             public void onBackStackChanged()
@@ -229,26 +229,5 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
     }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_manage:
-                startActivity(new Intent(getApplicationContext(), ManageActivity.class));
-                return true;
-            case R.id.action_logout:
-                Toast.makeText(getApplicationContext(), "Logout pressed...", Toast.LENGTH_SHORT).show();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
 
 }
