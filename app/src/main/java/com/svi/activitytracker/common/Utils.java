@@ -2,6 +2,7 @@ package com.svi.activitytracker.common;
 
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.widget.TextView;
@@ -13,6 +14,10 @@ import java.util.List;
 import java.util.Locale;
 
 public class Utils {
+
+    public static Drawable getActivityIconDrawable(Context context, int activityType) {
+        return context.getResources().getDrawable(getActivityIcon(activityType));
+    }
 
     public static int getActivityIcon(int activityType) {
 
@@ -35,6 +40,10 @@ public class Utils {
                 break;
         }
         return iconId;
+    }
+
+    public static String getActivityNameString(Context context, int activityType) {
+        return context.getResources().getString(getActivityName(activityType));
     }
 
     public static int getActivityName(int activityType) {
@@ -69,18 +78,7 @@ public class Utils {
                     try {
                         final List<Address> addresses = gcd.getFromLocation(lat, lng, 1);
                         if (addresses != null && addresses.size() > 0) {
-                            String locality = addresses.get(0).getLocality();
-                            if (locality == null) {
-                                locality = addresses.get(0).getFeatureName();
-                            }
-                            if (locality == null) {
-                                locality = addresses.get(0).getAdminArea();
-                            }
-                            String address = addresses.get(0).getThoroughfare();
-                            if (address == null) {
-                                address = addresses.get(0).getSubLocality();
-                            }
-                            final String locationDescription = (address == null ? "" : address + ", ") + locality;
+                            final String locationDescription = addresses.get(0).getLocality();
                             place.post(new Runnable() {
                                 @Override
                                 public void run() {

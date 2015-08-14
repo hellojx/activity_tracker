@@ -8,6 +8,7 @@
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/activity_details_toolbar"
+        style="@style/Widget.ActivityTracker.ActionBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/toolbar_color"
@@ -52,6 +53,12 @@
         android:layout_width="match_parent"
         android:layout_height="160dp"
         android:paddingTop="20dp">
+
+        <RelativeLayout
+            android:id="@+id/map_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
     </RelativeLayout>
 
     <LinearLayout
@@ -191,12 +198,17 @@
             </LinearLayout>
         </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
         <Button
             android:id="@+id/daily_log"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/blue_btn_bg_selector"
-            android:layout_marginTop="42dp"
+            android:layout_marginBottom="20dp"
             android:layout_gravity="center_horizontal"
             android:textColor="#FFFFFF"
             android:text="Daily Log"/>

@@ -2,7 +2,9 @@ package com.svi.activitytracker.fragment;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -11,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,6 +46,10 @@ public class ActivityListFragment extends AbsActivityFragment {
     private History.HistoryGotListener mHistoryGotListener;
     private HistoryAdapter mHistoryAdapter;
 
+    private int mSelectedYear;
+    private int mSelectedMonth;
+    private int mSelectedDate;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -57,12 +64,7 @@ public class ActivityListFragment extends AbsActivityFragment {
         toolbar = (Toolbar) view.findViewById(R.id.list_toolbar);
 
         Date date = new Date();
-        mHistory = new History(getActivity(), ((MainActivity) getActivity()).getClient().getClient(), new Display(History.class.getName()) {
-            @Override
-            public void show(String msg) {
-                log(msg);
-            }
-        });
+        mHistory = new History(((MainActivity) getActivity()).getClient().getClient());
 
         mEmptyView = (LinearLayout) view.findViewById(R.id.activityEmptyView);
         mHistoryAdapter = new HistoryAdapter();
@@ -82,7 +84,11 @@ public class ActivityListFragment extends AbsActivityFragment {
         mActivityList.setAdapter(mHistoryAdapter);
         checkAdapterIsEmpty();
 
-        mHistory.getHistory(date.getYear() + 1900, date.getMonth(), date.getDate(), mHistoryGotListener);
+        mSelectedYear = date.getYear() + 1900;
+        mSelectedMonth = date.getMonth();
+        mSelectedDate = date.getDate();
+
+        mHistory.getHistory(mSelectedYear, mSelectedMonth, mSelectedDate, mHistoryGotListener);
 
         mDateText.setText(String.valueOf(date.getDate()));
         mMonthText.setText(new DateFormatSymbols().getMonths()[date.getMonth()]);
@@ -91,16 +97,19 @@ public class ActivityListFragment extends AbsActivityFragment {
         mCalendarBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Date date = new Date();
+
                 DatePickerDialog tpd = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                         mDateText.setText(String.valueOf(dayOfMonth));
                         mMonthText.setText(new DateFormatSymbols().getMonths()[monthOfYear]);
 
+                        mSelectedYear = year;
+                        mSelectedMonth = monthOfYear;
+                        mSelectedDate = dayOfMonth;
                         mHistory.getHistory(year, monthOfYear, dayOfMonth, mHistoryGotListener);
                     }
-                }, date.getYear() + 1900, date.getMonth(), date.getDate());
+                }, mSelectedYear, mSelectedMonth, mSelectedDate);
                 tpd.show();
             }
         });
@@ -108,6 +117,14 @@ public class ActivityListFragment extends AbsActivityFragment {
         final LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mActivityList.setLayoutManager(layoutManager);
+
+        Cursor c = getActivity().getApplication().getContentResolver().query(ContactsContract.Profile.CONTENT_URI, null, null, null, null);
+        c.moveToFirst();
+        String ownerName = c.getString(c.getColumnIndex("display_name"));
+        c.close();
+
+        toolbar.setTitle(ownerName);
+
         return view;
     }
 
@@ -171,30 +188,29 @@ public class ActivityListFragment extends AbsActivityFragment {
                 activityListViewHolder.mActivityType.setText(item.description);
                 activityListViewHolder.mActivityTimeInerval.findViewById(R.id.activity_time_interval);
                 activityListViewHolder.mActivityTime.findViewById(R.id.activity_time);
-                activityListViewHolder.mActivityDistance.findViewById(R.id.activity_distance);
             } else {
                 final DateFormat dateFormat = new SimpleDateFormat("HH:mm");
                 String date = dateFormat.format(item.startTime);
 
+                activityListViewHolder.mActivityIcon.setImageResource(Utils.getActivityIcon(item.activityType));
                 activityListViewHolder.mActivityType.setText(Utils.getActivityName(item.activityType));
-                activityListViewHolder.mActivityTimeInerval.setText(TimeUnit.MILLISECONDS.toMinutes(item.timeInterval) + " minutes");
+                activityListViewHolder.mActivityTimeInerval.setText(TimeUnit.MILLISECONDS.toMinutes(item.timeInterval) + " min");
                 activityListViewHolder.mActivityTime.setText(date);
-                activityListViewHolder.mActivityDistance.setText(item.distance == 0 ? "" : item.distance + " steps");
             }
         }
 
         public class ActivityListViewHolder extends RecyclerView.ViewHolder {
+            protected ImageView mActivityIcon;
             protected TextView mActivityType;
             protected TextView mActivityTimeInerval;
             protected TextView mActivityTime;
-            protected TextView mActivityDistance;
 
             public ActivityListViewHolder(View v) {
                 super(v);
+                mActivityIcon = (ImageView) v.findViewById(R.id.activity_icon);
                 mActivityType = (TextView) v.findViewById(R.id.activity_type);
                 mActivityTimeInerval = (TextView) v.findViewById(R.id.activity_time_interval);
                 mActivityTime = (TextView) v.findViewById(R.id.activity_time);
-                mActivityDistance = (TextView) v.findViewById(R.id.activity_distance);
             }
         }
 
