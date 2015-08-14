@@ -120,22 +120,18 @@ public class ActivityListFragment extends AbsActivityFragment {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mActivityList.setLayoutManager(layoutManager);
 
-        try {
-            Cursor c = getActivity().getApplication().getContentResolver().query(ContactsContract.Profile.CONTENT_URI, null, null, null, null);
-            c.moveToFirst();
-            Log.d("test", "c: " + c);
-            String ownerName = c.getString(c.getColumnIndex("display_name"));
-            c.close();
-
+        Cursor cursor = getActivity().getApplication().getContentResolver().query(ContactsContract.Profile.CONTENT_URI, null, null, null, null);
+        if( cursor != null && cursor.moveToFirst() ){
+            String ownerName = cursor.getString(cursor.getColumnIndex("display_name"));
             toolbar.setTitle(ownerName);
-        } catch (Exception e){
-            e.printStackTrace();
+            cursor.close();
         }
+
         return view;
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState){
+    public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
         toolbar.inflateMenu(R.menu.menu_main);
@@ -228,8 +224,8 @@ public class ActivityListFragment extends AbsActivityFragment {
             return mHistoryList.size();
         }
     }
-    
-    private void checkAdapterIsEmpty () {
+
+    private void checkAdapterIsEmpty() {
         if (mHistoryAdapter.getItemCount() == 0) {
             mEmptyView.setVisibility(View.VISIBLE);
         } else {
