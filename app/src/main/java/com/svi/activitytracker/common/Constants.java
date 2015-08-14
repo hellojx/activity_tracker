@@ -29,5 +29,17 @@ public class Constants {
     public static final String FRAGMENT_ACTIVITY_DETAILS_TAG = "details";
     public static final String FRAGMENT_ACTIVITY_EDIT_TAG = "edit";
 
+    public static final String PREFS_NAME = "activity_prefs";
+
+    public static final String WALKING = "walking";
+    public static final String DRIVING = "driving";
+    public static final String RIDING_BUS = "riding_bus";
+    public static final String CYCLING = "cycling";
+    public static final String RUNNING = "running";
+    public static final String SWIMMING = "swimming";
+    public static final String BASKETBALL = "basketball";
+    public static final String RIDING_TRAIN = "riding_train";
+
+    public static final String IS_LOGGED_IN = "is_logged_in";
 
 }
