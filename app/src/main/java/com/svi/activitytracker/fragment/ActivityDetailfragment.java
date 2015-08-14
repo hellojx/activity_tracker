@@ -110,12 +110,15 @@ public class ActivityDetailfragment extends AbsActivityFragment
         mapFragment.getMapAsync(this);
 
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.activity_details_toolbar);
-        Cursor c = getActivity().getApplication().getContentResolver().query(ContactsContract.Profile.CONTENT_URI, null, null, null, null);
-        c.moveToFirst();
-        String ownerName = c.getString(c.getColumnIndex("display_name"));
-        c.close();
-
-        toolbar.setTitle(ownerName);
+        try{
+            Cursor c = getActivity().getApplication().getContentResolver().query(ContactsContract.Profile.CONTENT_URI, null, null, null, null);
+            c.moveToFirst();
+            String ownerName = c.getString(c.getColumnIndex("display_name"));
+            c.close();
+            toolbar.setTitle(ownerName);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
         /*toolbar.inflateMenu(R.menu.menu_details);
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override

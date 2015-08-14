@@ -8,6 +8,7 @@ import android.provider.ContactsContract;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,6 +26,7 @@ import com.svi.activitytracker.common.Utils;
 import com.svi.activitytracker.lib.History;
 import com.svi.activitytracker.ui.MainActivity;
 import com.svi.activitytracker.ui.ManageActivity;
+import com.svi.activitytracker.utils.ActivityUtils;
 
 import java.text.DateFormat;
 import java.text.DateFormatSymbols;
@@ -118,13 +120,17 @@ public class ActivityListFragment extends AbsActivityFragment {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mActivityList.setLayoutManager(layoutManager);
 
-        Cursor c = getActivity().getApplication().getContentResolver().query(ContactsContract.Profile.CONTENT_URI, null, null, null, null);
-        c.moveToFirst();
-        String ownerName = c.getString(c.getColumnIndex("display_name"));
-        c.close();
+        try {
+            Cursor c = getActivity().getApplication().getContentResolver().query(ContactsContract.Profile.CONTENT_URI, null, null, null, null);
+            c.moveToFirst();
+            Log.d("test", "c: " + c);
+            String ownerName = c.getString(c.getColumnIndex("display_name"));
+            c.close();
 
-        toolbar.setTitle(ownerName);
-
+            toolbar.setTitle(ownerName);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
         return view;
     }
 
