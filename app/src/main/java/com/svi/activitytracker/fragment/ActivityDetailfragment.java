@@ -51,6 +51,7 @@ import com.svi.activitytracker.common.Utils;
 import com.svi.activitytracker.ui.MainActivity;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -282,8 +283,8 @@ public class ActivityDetailfragment extends AbsActivityFragment
             mLocationList.add(new LatLng(Double.valueOf(lat), Double.valueOf(lng)));
             Utils.getPlaceDescription(getActivity(), Float.valueOf(lat), Float.valueOf(lng), mLocationValue);
         } else if (dp.getDataType().equals(DataType.TYPE_SPEED)) {
-            String speed = dp.getValue(Field.FIELD_SPEED).toString();
-            mSpeedValue.setText(speed + "m/s");
+            Double speed = Double.valueOf(dp.getValue(Field.FIELD_SPEED).toString());
+            mSpeedValue.setText(roundTwoDecimals(speed) + "km/h");
         } else {
             String msg = "";
             for (Field field : dp.getDataType().getFields()) {
@@ -291,6 +292,12 @@ public class ActivityDetailfragment extends AbsActivityFragment
             }
             Log.e("detail", msg);
         }
+    }
+
+    double roundTwoDecimals(double d)
+    {
+        DecimalFormat twoDForm = new DecimalFormat("#.##");
+        return Double.valueOf(twoDForm.format(d));
     }
 
     public void updateArguments(Bundle data) {
