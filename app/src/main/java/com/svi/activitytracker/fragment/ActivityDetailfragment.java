@@ -1,19 +1,18 @@
 package com.svi.activitytracker.fragment;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -22,14 +21,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.fitness.Fitness;
-import com.google.android.gms.fitness.data.Bucket;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
-import com.google.android.gms.fitness.data.DataSource;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.request.DataDeleteRequest;
@@ -42,7 +38,6 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.svi.activitytracker.R;
@@ -54,7 +49,6 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class ActivityDetailfragment extends AbsActivityFragment
@@ -84,6 +78,10 @@ public class ActivityDetailfragment extends AbsActivityFragment
     private GoogleApiClient mClient;
 
     private ActivitySelectorDialogFragment mActivitySelectorDialogFragment;
+
+    private Double mSpeed;
+    private int mSpeedCnt;
+    private boolean mLocationNameShown;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -213,6 +211,9 @@ public class ActivityDetailfragment extends AbsActivityFragment
             @Override
             public void onResult(DataReadResult dataReadResult) {
 
+                mSpeed = 0.0;
+                mSpeedCnt = 0;
+                mLocationNameShown = false;
 
                 for (DataSet dataSet : dataReadResult.getDataSets()) {
 
@@ -224,6 +225,11 @@ public class ActivityDetailfragment extends AbsActivityFragment
                             describeDataPoint(dp);
                         }
                     }
+                }
+
+                if (mSpeedCnt > 0) {
+                    mSpeed = mSpeed / mSpeedCnt;
+                    mSpeedValue.setText(roundTwoDecimals(mSpeed) + "km/h");
                 }
 
                 if (mLocationList.size() > 0) {
@@ -281,10 +287,14 @@ public class ActivityDetailfragment extends AbsActivityFragment
             String lat = dp.getValue(Field.FIELD_LATITUDE).toString();
             String lng = dp.getValue(Field.FIELD_LONGITUDE).toString();
             mLocationList.add(new LatLng(Double.valueOf(lat), Double.valueOf(lng)));
-            Utils.getPlaceDescription(getActivity(), Float.valueOf(lat), Float.valueOf(lng), mLocationValue);
+            if (!mLocationNameShown) {
+                Utils.getPlaceDescription(getActivity(), Float.valueOf(lat), Float.valueOf(lng), mLocationValue);
+                mLocationNameShown = true;
+            }
         } else if (dp.getDataType().equals(DataType.TYPE_SPEED)) {
-            Double speed = Double.valueOf(dp.getValue(Field.FIELD_SPEED).toString());
-            mSpeedValue.setText(roundTwoDecimals(speed) + "km/h");
+            Double speed = Double.valueOf(dp.getValue(Field.FIELD_SPEED).toString()) * 3600 / 1000;
+            mSpeed += speed;
+            mSpeedCnt ++;
         } else {
             String msg = "";
             for (Field field : dp.getDataType().getFields()) {

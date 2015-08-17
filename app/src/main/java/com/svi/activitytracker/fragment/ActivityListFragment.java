@@ -112,6 +112,8 @@ public class ActivityListFragment extends AbsActivityFragment {
                         mHistory.getHistory(year, monthOfYear, dayOfMonth, mHistoryGotListener);
                     }
                 }, mSelectedYear, mSelectedMonth, mSelectedDate);
+                tpd.getDatePicker().setCalendarViewShown(true);
+                tpd.getDatePicker().setSpinnersShown(false);
                 tpd.show();
             }
         });
