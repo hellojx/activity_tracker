@@ -40,6 +40,7 @@ public class Client {
                 .addApi(Fitness.SENSORS_API)
                 .addApi(Fitness.HISTORY_API)
                 .addApi(Fitness.RECORDING_API)
+                .addApi(Fitness.CONFIG_API)
                 .addScope(SCOPE_LOCATION_READ)
                 .addScope(SCOPE_ACTIVITY_READ)
                 .addScope(SCOPE_BODY_READ_WRITE)
