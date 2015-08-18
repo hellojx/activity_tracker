@@ -1,6 +1,7 @@
 package com.svi.activitytracker.fragment;
 
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -50,9 +51,9 @@ public class ActivityListFragment extends AbsActivityFragment {
     private TextView mDateText;
     private TextView mMonthText;
     private Toolbar toolbar;
+    private ProgressDialog dialog;
 
-    Client mClient;
-
+    private Client mClient;
     private History mHistory;
     private History.HistoryGotListener mHistoryGotListener;
     private HistoryAdapter mHistoryAdapter;
@@ -162,6 +163,7 @@ public class ActivityListFragment extends AbsActivityFragment {
                 return true;
             }
         });
+        dialog = new ProgressDialog(getActivity());
         checkGoogleFitAPI();
     }
 
@@ -177,19 +179,22 @@ public class ActivityListFragment extends AbsActivityFragment {
     }
 
     private void disableGoogleFit(){
-        PendingResult<Status> pendingResult = Fitness.ConfigApi.disableFit(mClient.getClient());
+        dialog.setMessage(getActivity().getResources().getString(R.string.text_logging_out));
+        dialog.show();
 
+        PendingResult<Status> pendingResult = Fitness.ConfigApi.disableFit(mClient.getClient());
         pendingResult.setResultCallback(new ResultCallback<Status>() {
             @Override
             public void onResult(Status status) {
-                if(status.isSuccess()) {
+                if (status.isSuccess()) {
                     Log.i(TAG, "Google Fit disabled");
-                    ActivityUtils.setIsLoggedIn(getActivity(), false);
+                    ActivityUtils.resetPrefsValues(getActivity(), false);
                     Intent intent = new Intent(getActivity(), SplashActivity.class);
                     startActivity(intent);
-                }else{
+                } else {
                     Log.e(TAG, "Google Fit wasn't disabled " + status);
                 }
+                dialog.dismiss();
             }
         });
     }

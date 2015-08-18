@@ -21,12 +21,15 @@ public class SplashActivity extends AppCompatActivity {
         if(ActivityUtils.getIsLoggedIn(getApplicationContext())){
             startActivity(new Intent(getApplicationContext(), MainActivity.class));
             finish();
+        } else {
+            ActivityUtils.setIsFirstTimeSeeManageActivities(getApplicationContext(), true);
         }
+
     }
 
     @OnClick(R.id.btnContinue)
     public void continueWith() {
-        startActivity(new Intent(getApplicationContext(), ManageActivity.class));
+        startActivity(new Intent(getApplicationContext(), MainActivity.class));
         finish();
     }
 

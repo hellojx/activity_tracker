@@ -5,11 +5,8 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.DatePicker;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.svi.activitytracker.R;
 import com.svi.activitytracker.common.Constants;
@@ -25,7 +22,6 @@ import com.svi.activitytracker.lib.Sensors;
 import com.svi.activitytracker.utils.ActivityUtils;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -62,47 +58,46 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         display.show("client initialization");
-        client = new Client(this,
-                new Client.Connection() {
-                    @Override
-                    public void onConnected() {
-                        display.show("client connected");
-//                        sensors demo
-                        initSensors();
-                        display.show("list datasources");
-                        sensors.listDatasourcesAndSubscribe();
+        client = new Client(this, new Client.Connection() {
+            @Override
+            public void onConnected() {
+                display.show("client connected");
+                // sensors demo
+                initSensors();
+                display.show("list datasources");
+                sensors.listDatasourcesAndSubscribe();
 
-//                        recording demo
-                        recording = new Recording(client.getClient(), new Display(Recording.class.getName()) {
-                            @Override
-                            public void show(String msg) {
-                                log(msg);
-                            }
-                        });
-                        recording.subscribe();
-                        recording.listSubscriptions();
-
-//                        history demo
-                        /*history = new History(MainActivity.this, client.getClient(), new Display(History.class.getName()) {
-                            @Override
-                            public void show(String msg) {
-                                log(msg);
-                            }
-                        });*/
-                        //history.readWeekBefore(new Date());
-                        //Date date = new Date();
-                        //history.getHistory(date.getYear() + 1900, date.getMonth(), date.getDate(), mHistoryView);
-                        ActivityUtils.setIsLoggedIn(getApplicationContext(), true);
-                        mClient = client;
-                        changeFragment(Constants.FRAGMENT_ACTIVITY_LIST, null);
-                    }
-                },
-                new Display(Client.class.getName()) {
+                // recording demo
+                recording = new Recording(client.getClient(), new Display(Recording.class.getName()) {
                     @Override
                     public void show(String msg) {
                         log(msg);
                     }
                 });
+                recording.subscribe();
+                recording.listSubscriptions();
+
+                // history demo
+                /*history = new History(MainActivity.this, client.getClient(), new Display(History.class.getName()) {
+                    @Override
+                    public void show(String msg) { log(msg); }
+                });*/
+                //history.readWeekBefore(new Date());
+                //Date date = new Date();
+                //history.getHistory(date.getYear() + 1900, date.getMonth(), date.getDate(), mHistoryView);
+                ActivityUtils.setIsLoggedIn(getApplicationContext(), true);
+                mClient = client;
+                if(ActivityUtils.getIsFirstTimeSeeManageActivities(getApplicationContext())){
+                    startActivity(new Intent(getApplicationContext(), ManageActivity.class));
+                }
+                changeFragment(Constants.FRAGMENT_ACTIVITY_LIST, null);
+            }
+        }, new Display(Client.class.getName()) {
+            @Override
+            public void show(String msg) {
+                log(msg);
+            }
+        });
 
 
         getFragmentManager().addOnBackStackChangedListener(getListener());
@@ -155,11 +150,9 @@ public class MainActivity extends AppCompatActivity {
         return (AbsActivityFragment) getFragmentManager().findFragmentById(R.id.fragment_container);
     }
 
-    private FragmentManager.OnBackStackChangedListener getListener(){
-        FragmentManager.OnBackStackChangedListener result = new FragmentManager.OnBackStackChangedListener()
-        {
-            public void onBackStackChanged()
-            {
+    private FragmentManager.OnBackStackChangedListener getListener() {
+        FragmentManager.OnBackStackChangedListener result = new FragmentManager.OnBackStackChangedListener() {
+            public void onBackStackChanged() {
                 mSelectedFragment = getCurrentFragment();
             }
         };

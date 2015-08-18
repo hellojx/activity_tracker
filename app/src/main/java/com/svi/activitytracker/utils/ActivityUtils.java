@@ -10,7 +10,6 @@ public class ActivityUtils {
 
     private static SharedPreferences prefs;
 
-
     public static void setIsWalking(Context context, boolean value){
         prefs = context.getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
@@ -127,6 +126,37 @@ public class ActivityUtils {
         prefs = context.getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
         boolean value = prefs.getBoolean(Constants.IS_LOGGED_IN, false);
         return value;
+    }
+
+    public static void setIsFirstTimeSeeManageActivities(Context context, boolean value){
+        prefs = context.getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(Constants.IS_FIRST_TIME, value);
+        editor.commit();
+    }
+
+    public static boolean getIsFirstTimeSeeManageActivities(Context context){
+        prefs = context.getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
+        boolean value = prefs.getBoolean(Constants.IS_FIRST_TIME, false);
+        return value;
+    }
+
+
+    public static void resetPrefsValues(Context context, boolean value){
+        prefs = context.getSharedPreferences(Constants.PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(Constants.IS_LOGGED_IN, value);
+        editor.putBoolean(Constants.IS_FIRST_TIME, true);
+        // reset activities
+        editor.putBoolean(Constants.WALKING, value);
+        editor.putBoolean(Constants.DRIVING, value);
+        editor.putBoolean(Constants.RIDING_BUS, value);
+        editor.putBoolean(Constants.CYCLING, value);
+        editor.putBoolean(Constants.RUNNING, value);
+        editor.putBoolean(Constants.SWIMMING, value);
+        editor.putBoolean(Constants.BASKETBALL, value);
+        editor.putBoolean(Constants.RIDING_TRAIN, value);
+        editor.commit();
     }
 
 }
