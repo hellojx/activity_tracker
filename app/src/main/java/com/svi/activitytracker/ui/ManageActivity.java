@@ -1,6 +1,5 @@
 package com.svi.activitytracker.ui;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -22,18 +21,18 @@ public class ManageActivity extends AppCompatActivity implements View.OnClickLis
     CustomImageView activityWalking;
     @Bind(R.id.activityDriving)
     CustomImageView activityDriving;
-    @Bind(R.id.activityRidingBus)
-    CustomImageView activityRidingBus;
+    //@Bind(R.id.activityRidingBus)
+    //CustomImageView activityRidingBus;
     @Bind(R.id.activityCycling)
     CustomImageView activityCycling;
-    @Bind(R.id.activityRunning)
-    CustomImageView activityRunning;
-    @Bind(R.id.activitySwimming)
-    CustomImageView activitySwimming;
-    @Bind(R.id.activityBasketball)
-    CustomImageView activityBasketball;
-    @Bind(R.id.activityRidingTrain)
-    CustomImageView activityRidingTrain;
+    //@Bind(R.id.activityRunning)
+    //CustomImageView activityRunning;
+    //@Bind(R.id.activitySwimming)
+    //CustomImageView activitySwimming;
+    //@Bind(R.id.activityBasketball)
+    //CustomImageView activityBasketball;
+    //@Bind(R.id.activityRidingTrain)
+    //CustomImageView activityRidingTrain;
 
     private static final String TAG = "ManageActivity";
 
@@ -49,17 +48,20 @@ public class ManageActivity extends AppCompatActivity implements View.OnClickLis
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
-                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                backToMain();
             }
         });
 
+        ActivityUtils.setIsFirstTimeSeeManageActivities(getApplicationContext(), false);
         setImageResources();
     }
 
     @OnClick(R.id.btnStartTracking)
     public void startTracking() {
-        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        backToMain();
+    }
+
+    private void backToMain(){
         finish();
     }
 
@@ -75,19 +77,19 @@ public class ManageActivity extends AppCompatActivity implements View.OnClickLis
         } else {
             activityDriving.setImageResource(R.drawable.driving_a_car_not_selected);
         }
-
+        /*
         if(ActivityUtils.getIsRidingBus(getApplicationContext())){
             activityRidingBus.setImageResource(R.drawable.riding_a_bus);
         } else {
             activityRidingBus.setImageResource(R.drawable.riding_a_bus_not_selected);
         }
-
+        */
         if(ActivityUtils.getIsCycling(getApplicationContext())){
             activityCycling.setImageResource(R.drawable.cycling);
         } else {
             activityCycling.setImageResource(R.drawable.cycling_not_selected);
         }
-
+        /*
         if(ActivityUtils.getIsRunning(getApplicationContext())) {
             activityRunning.setImageResource(R.drawable.running);
         } else {
@@ -111,8 +113,8 @@ public class ManageActivity extends AppCompatActivity implements View.OnClickLis
         } else {
             activityRidingTrain.setImageResource(R.drawable.riding_a_train_not_selected);
         }
+        */
     }
-
 
     @Override
     public void onClick(View v){
@@ -138,6 +140,7 @@ public class ManageActivity extends AppCompatActivity implements View.OnClickLis
                     ActivityUtils.setIsDriving(getApplicationContext(), true);
                 }
                 break;
+            /*
             case R.id.activityRidingBus:
                 drawable = R.drawable.riding_a_bus;
                 if(activityRidingBus.getResourceId() == drawable){ // deactivate riding bus
@@ -148,6 +151,7 @@ public class ManageActivity extends AppCompatActivity implements View.OnClickLis
                     ActivityUtils.setIsRidingBus(getApplicationContext(), true);
                 }
                 break;
+            */
             case R.id.activityCycling:
                 drawable = R.drawable.cycling;
                 if(activityCycling.getResourceId() == drawable){ // deactivate cycling
@@ -158,6 +162,7 @@ public class ManageActivity extends AppCompatActivity implements View.OnClickLis
                     ActivityUtils.setIsCycling(getApplicationContext(), true);
                 }
                 break;
+            /*
             case R.id.activityRunning:
                 drawable = R.drawable.running;
                 if(activityRunning.getResourceId() == drawable){ // deactivate running
@@ -198,6 +203,7 @@ public class ManageActivity extends AppCompatActivity implements View.OnClickLis
                     ActivityUtils.setIsRidingTrain(getApplicationContext(), true);
                 }
                 break;
+            */
         }
     }
 }

@@ -23,6 +23,8 @@
 
     <string name="text_no_activity">No activities tracked yet.</string>
 
+    <string name="text_logging_out">Logging out</string>
+
     <!-- Activities --> 
     <string name="activity_walking">Walking</string>
      <string name="activity_in_vehicle">In Vehicle</string> 

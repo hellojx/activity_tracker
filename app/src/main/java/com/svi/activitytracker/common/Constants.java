@@ -41,5 +41,5 @@ public class Constants {
     public static final String RIDING_TRAIN = "riding_train";
 
     public static final String IS_LOGGED_IN = "is_logged_in";
-
+    public static final String IS_FIRST_TIME = "is_first_time";
 }
