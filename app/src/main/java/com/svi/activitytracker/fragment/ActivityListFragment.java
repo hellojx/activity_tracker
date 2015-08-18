@@ -19,13 +19,20 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.fitness.ConfigApi;
+import com.google.android.gms.fitness.Fitness;
 import com.svi.activitytracker.R;
 import com.svi.activitytracker.common.Constants;
 import com.svi.activitytracker.common.Display;
 import com.svi.activitytracker.common.Utils;
+import com.svi.activitytracker.lib.Client;
 import com.svi.activitytracker.lib.History;
 import com.svi.activitytracker.ui.MainActivity;
 import com.svi.activitytracker.ui.ManageActivity;
+import com.svi.activitytracker.ui.SplashActivity;
 import com.svi.activitytracker.utils.ActivityUtils;
 
 import java.text.DateFormat;
@@ -44,6 +51,8 @@ public class ActivityListFragment extends AbsActivityFragment {
     private TextView mMonthText;
     private Toolbar toolbar;
 
+    Client mClient;
+
     private History mHistory;
     private History.HistoryGotListener mHistoryGotListener;
     private HistoryAdapter mHistoryAdapter;
@@ -51,6 +60,8 @@ public class ActivityListFragment extends AbsActivityFragment {
     private int mSelectedYear;
     private int mSelectedMonth;
     private int mSelectedDate;
+
+    private static final String TAG = "ActivityListFragment";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -145,13 +156,42 @@ public class ActivityListFragment extends AbsActivityFragment {
                         startActivity(new Intent(getActivity(), ManageActivity.class));
                         break;
                     case R.id.action_logout:
-                        Toast.makeText(getActivity(), "Logout pressed...", Toast.LENGTH_SHORT).show();
+                        disableGoogleFit();
                         break;
                 }
                 return true;
             }
         });
+        checkGoogleFitAPI();
+    }
 
+    private void checkGoogleFitAPI(){
+        Log.d(TAG, "checkGoogleFitAPI");
+        mClient = MainActivity.mClient;
+        if(!mClient.getClient().isConnected()){
+            Log.e(TAG, "Google Fit wasn't connected");
+            return;
+        } else {
+            Log.d(TAG, "Google Fit is connected");
+        }
+    }
+
+    private void disableGoogleFit(){
+        PendingResult<Status> pendingResult = Fitness.ConfigApi.disableFit(mClient.getClient());
+
+        pendingResult.setResultCallback(new ResultCallback<Status>() {
+            @Override
+            public void onResult(Status status) {
+                if(status.isSuccess()) {
+                    Log.i(TAG, "Google Fit disabled");
+                    ActivityUtils.setIsLoggedIn(getActivity(), false);
+                    Intent intent = new Intent(getActivity(), SplashActivity.class);
+                    startActivity(intent);
+                }else{
+                    Log.e(TAG, "Google Fit wasn't disabled " + status);
+                }
+            }
+        });
     }
 
     private class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ActivityListViewHolder> {

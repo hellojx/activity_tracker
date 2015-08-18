@@ -36,6 +36,9 @@ public class MainActivity extends AppCompatActivity {
     private AbsActivityFragment mActivityEditFragment;
     private AbsActivityFragment mSelectedFragment;
 
+
+    public static Client mClient;
+
     private Client client;
     private Sensors sensors;
     private Recording recording;
@@ -90,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
                         //Date date = new Date();
                         //history.getHistory(date.getYear() + 1900, date.getMonth(), date.getDate(), mHistoryView);
                         ActivityUtils.setIsLoggedIn(getApplicationContext(), true);
+                        mClient = client;
                         changeFragment(Constants.FRAGMENT_ACTIVITY_LIST, null);
                     }
                 },
