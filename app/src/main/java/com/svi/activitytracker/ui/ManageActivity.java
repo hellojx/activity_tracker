@@ -69,49 +69,49 @@ public class ManageActivity extends AppCompatActivity implements View.OnClickLis
         if(ActivityUtils.getIsWalking(getApplicationContext())){
             activityWalking.setImageResource(R.drawable.walking);
         } else{
-            activityWalking.setImageResource(R.drawable.walking_not_selected);
+            activityWalking.setImageResource(R.drawable.walking_not_active);
         }
 
         if(ActivityUtils.getIsDriving(getApplicationContext())){
             activityDriving.setImageResource(R.drawable.driving_a_car);
         } else {
-            activityDriving.setImageResource(R.drawable.driving_a_car_not_selected);
+            activityDriving.setImageResource(R.drawable.driving_a_car_not_active);
         }
         /*
         if(ActivityUtils.getIsRidingBus(getApplicationContext())){
             activityRidingBus.setImageResource(R.drawable.riding_a_bus);
         } else {
-            activityRidingBus.setImageResource(R.drawable.riding_a_bus_not_selected);
+            activityRidingBus.setImageResource(R.drawable.riding_a_bus_not_active);
         }
         */
         if(ActivityUtils.getIsCycling(getApplicationContext())){
             activityCycling.setImageResource(R.drawable.cycling);
         } else {
-            activityCycling.setImageResource(R.drawable.cycling_not_selected);
+            activityCycling.setImageResource(R.drawable.cycling_not_active);
         }
         /*
         if(ActivityUtils.getIsRunning(getApplicationContext())) {
             activityRunning.setImageResource(R.drawable.running);
         } else {
-            activityRunning.setImageResource(R.drawable.running_not_selected);
+            activityRunning.setImageResource(R.drawable.running_not_active);
         }
 
         if(ActivityUtils.getIsSwimming(getApplicationContext())){
             activitySwimming.setImageResource(R.drawable.swimming);
         } else {
-            activitySwimming.setImageResource(R.drawable.swimming_not_selected);
+            activitySwimming.setImageResource(R.drawable.swimming_not_active);
         }
 
         if(ActivityUtils.getIsBasketball(getApplicationContext())){
             activityBasketball.setImageResource(R.drawable.basketball);
         } else {
-            activityBasketball.setImageResource(R.drawable.basketball_not_selected);
+            activityBasketball.setImageResource(R.drawable.basketball_not_active);
         }
 
         if(ActivityUtils.getIsRidingTrain(getApplicationContext())) {
             activityRidingTrain.setImageResource(R.drawable.riding_a_train);
         } else {
-            activityRidingTrain.setImageResource(R.drawable.riding_a_train_not_selected);
+            activityRidingTrain.setImageResource(R.drawable.riding_a_train_not_active);
         }
         */
     }
@@ -123,7 +123,7 @@ public class ManageActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.activityWalking:
                 drawable = R.drawable.walking;
                 if(activityWalking.getResourceId() == drawable){ // deactivate walking
-                    activityWalking.setImageResource(R.drawable.walking_not_selected);
+                    activityWalking.setImageResource(R.drawable.walking_not_active);
                     ActivityUtils.setIsWalking(getApplicationContext(), false);
                 } else { // activate walking
                     activityWalking.setImageResource(R.drawable.walking);
@@ -133,7 +133,7 @@ public class ManageActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.activityDriving:
                 drawable = R.drawable.driving_a_car;
                 if(activityDriving.getResourceId() == drawable){ // deactivate driving
-                    activityDriving.setImageResource(R.drawable.driving_a_car_not_selected);
+                    activityDriving.setImageResource(R.drawable.driving_a_car_not_active);
                     ActivityUtils.setIsDriving(getApplicationContext(), false);
                 } else { // activate driving
                     activityDriving.setImageResource(R.drawable.driving_a_car);
@@ -144,7 +144,7 @@ public class ManageActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.activityRidingBus:
                 drawable = R.drawable.riding_a_bus;
                 if(activityRidingBus.getResourceId() == drawable){ // deactivate riding bus
-                    activityRidingBus.setImageResource(R.drawable.riding_a_bus_not_selected);
+                    activityRidingBus.setImageResource(R.drawable.riding_a_bus_not_active);
                     ActivityUtils.setIsRidingBus(getApplicationContext(), false);
                 } else { // activate riding bus
                     activityRidingBus.setImageResource(R.drawable.riding_a_bus);
@@ -155,7 +155,7 @@ public class ManageActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.activityCycling:
                 drawable = R.drawable.cycling;
                 if(activityCycling.getResourceId() == drawable){ // deactivate cycling
-                    activityCycling.setImageResource(R.drawable.cycling_not_selected);
+                    activityCycling.setImageResource(R.drawable.cycling_not_active);
                     ActivityUtils.setIsCycling(getApplicationContext(), false);
                 } else { // activate cycling
                     activityCycling.setImageResource(R.drawable.cycling);
@@ -166,7 +166,7 @@ public class ManageActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.activityRunning:
                 drawable = R.drawable.running;
                 if(activityRunning.getResourceId() == drawable){ // deactivate running
-                    activityRunning.setImageResource(R.drawable.running_not_selected);
+                    activityRunning.setImageResource(R.drawable.running_not_active);
                     ActivityUtils.setIsRunning(getApplicationContext(), false);
                 } else { // activate running
                     activityRunning.setImageResource(R.drawable.running);
@@ -176,7 +176,7 @@ public class ManageActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.activitySwimming:
                 drawable = R.drawable.swimming;
                 if(activitySwimming.getResourceId() == drawable){ // deactivate swimming
-                    activitySwimming.setImageResource(R.drawable.swimming_not_selected);
+                    activitySwimming.setImageResource(R.drawable.swimming_not_active);
                     ActivityUtils.setIsSwimming(getApplicationContext(), false);
                 } else { // activate swimming
                     activitySwimming.setImageResource(R.drawable.swimming);
@@ -186,7 +186,7 @@ public class ManageActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.activityBasketball:
                 drawable = R.drawable.basketball;
                 if(activityBasketball.getResourceId() == drawable){ // deactivate basketball
-                    activityBasketball.setImageResource(R.drawable.basketball_not_selected);
+                    activityBasketball.setImageResource(R.drawable.basketball_not_active);
                     ActivityUtils.setIsBasketball(getApplicationContext(), false);
                 } else { // activate basketball
                     activityBasketball.setImageResource(R.drawable.basketball);
@@ -196,7 +196,7 @@ public class ManageActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.activityRidingTrain:
                 drawable = R.drawable.riding_a_train;
                 if(activityRidingTrain.getResourceId() == drawable){ // deactivate riding train
-                    activityRidingTrain.setImageResource(R.drawable.riding_a_train_not_selected);
+                    activityRidingTrain.setImageResource(R.drawable.riding_a_train_not_active);
                     ActivityUtils.setIsRidingTrain(getApplicationContext(), false);
                 } else { // activate riding train
                     activityRidingTrain.setImageResource(R.drawable.riding_a_train);
