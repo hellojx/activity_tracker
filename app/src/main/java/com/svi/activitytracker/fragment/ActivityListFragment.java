@@ -18,16 +18,13 @@ import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.fitness.ConfigApi;
 import com.google.android.gms.fitness.Fitness;
 import com.svi.activitytracker.R;
 import com.svi.activitytracker.common.Constants;
-import com.svi.activitytracker.common.Display;
 import com.svi.activitytracker.common.Utils;
 import com.svi.activitytracker.lib.Client;
 import com.svi.activitytracker.lib.History;
@@ -235,31 +232,52 @@ public class ActivityListFragment extends AbsActivityFragment {
             History.HistoryItem item = mHistoryList.get(i);
             if (item.description != null) {
                 activityListViewHolder.mActivityType.setText(item.description);
-                activityListViewHolder.mActivityTimeInerval.findViewById(R.id.activity_time_interval);
+                activityListViewHolder.mActivityTimeInterval.findViewById(R.id.activity_time_interval);
                 activityListViewHolder.mActivityTime.findViewById(R.id.activity_time);
+                activityListViewHolder.mActivityLocation.findViewById(R.id.activity_location);
+                activityListViewHolder.mActivitySpeed.findViewById(R.id.activity_speed);
+                activityListViewHolder.mActivityDistance.findViewById(R.id.activity_distance);
             } else {
                 final DateFormat dateFormat = new SimpleDateFormat("HH:mm");
                 String date = dateFormat.format(item.startTime);
+                String location = "";
+                if(item.location != null) {
+                    location = Utils.locationStringFromLocation(item.location);
+                } else {
+                    location = "No location";
+                }
+                String speed = "0 km\\h";
+                String distance = String.valueOf(item.distance) + " m";
 
                 activityListViewHolder.mActivityIcon.setImageResource(Utils.getActivityIcon(item.activityType));
                 activityListViewHolder.mActivityType.setText(Utils.getActivityName(item.activityType));
-                activityListViewHolder.mActivityTimeInerval.setText(TimeUnit.MILLISECONDS.toMinutes(item.timeInterval) + " min");
+                activityListViewHolder.mActivityTimeInterval.setText(TimeUnit.MILLISECONDS.toMinutes(item.timeInterval) + " min");
                 activityListViewHolder.mActivityTime.setText(date);
+
+                activityListViewHolder.mActivityLocation.setText(location);
+                activityListViewHolder.mActivitySpeed.setText(speed);
+                activityListViewHolder.mActivityDistance.setText(distance);
             }
         }
 
         public class ActivityListViewHolder extends RecyclerView.ViewHolder {
             protected ImageView mActivityIcon;
             protected TextView mActivityType;
-            protected TextView mActivityTimeInerval;
+            protected TextView mActivityTimeInterval;
             protected TextView mActivityTime;
+            protected TextView mActivityLocation;
+            protected TextView mActivityDistance;
+            protected TextView mActivitySpeed;
 
             public ActivityListViewHolder(View v) {
                 super(v);
                 mActivityIcon = (ImageView) v.findViewById(R.id.activity_icon);
                 mActivityType = (TextView) v.findViewById(R.id.activity_type);
-                mActivityTimeInerval = (TextView) v.findViewById(R.id.activity_time_interval);
+                mActivityTimeInterval = (TextView) v.findViewById(R.id.activity_time_interval);
                 mActivityTime = (TextView) v.findViewById(R.id.activity_time);
+                mActivityLocation = (TextView) v.findViewById(R.id.activity_location);
+                mActivityDistance = (TextView) v.findViewById(R.id.activity_distance);
+                mActivitySpeed = (TextView) v.findViewById(R.id.activity_speed);
             }
         }
 
