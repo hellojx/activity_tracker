@@ -23,6 +23,10 @@
         <item name="contentInsetStart">0dp</item>
     </style>
 
+    <style name="DialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/primary</item>
+    </style>
+
     <style name="EditTextStyle">
         <item name="colorControlNormal">#737373</item>
     </style>

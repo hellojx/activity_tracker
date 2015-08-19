@@ -112,7 +112,7 @@ public class ActivityListFragment extends AbsActivityFragment {
             @Override
             public void onClick(View v) {
 
-                DatePickerDialog tpd = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
+                DatePickerDialog tpd = new DatePickerDialog(getActivity(), R.style.DialogTheme, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                         mDateText.setText(String.valueOf(dayOfMonth));
