@@ -7,6 +7,7 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
@@ -81,7 +82,10 @@ public class ActivityDetailfragment extends AbsActivityFragment
 
     private Double mSpeed;
     private int mSpeedCnt;
+    private float mCalculatedDistance;
+    private float mTrackedDistance;
     private boolean mLocationNameShown;
+    private Location mCurrentLoc;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -214,6 +218,9 @@ public class ActivityDetailfragment extends AbsActivityFragment
                 mSpeed = 0.0;
                 mSpeedCnt = 0;
                 mLocationNameShown = false;
+                mCalculatedDistance = 0;
+                mTrackedDistance = -1;
+                mCurrentLoc = null;
 
                 for (DataSet dataSet : dataReadResult.getDataSets()) {
 
@@ -230,6 +237,15 @@ public class ActivityDetailfragment extends AbsActivityFragment
                 if (mSpeedCnt > 0) {
                     mSpeed = mSpeed / mSpeedCnt;
                     mSpeedValue.setText(roundTwoDecimals(mSpeed) + "km/h");
+                }
+
+                if (mTrackedDistance <= 0 && mCalculatedDistance > 0) {
+                    if (mCalculatedDistance < 1000) {
+                        mDistanceValue.setText(mCalculatedDistance + " m");
+                    } else {
+                        float distance = mCalculatedDistance / 1000;
+                        mDistanceValue.setText(roundTwoDecimals(distance) + " km");
+                    }
                 }
 
                 if (mLocationList.size() > 0) {
@@ -281,12 +297,27 @@ public class ActivityDetailfragment extends AbsActivityFragment
                 mStepCount.setVisibility(View.VISIBLE);
             }
         } else if (dp.getDataType().equals(DataType.TYPE_DISTANCE_DELTA)) {
-            float distance = Float.valueOf(dp.getValue(Field.FIELD_DISTANCE).toString()) / 1000;
-            mDistanceValue.setText(distance + " km");
+            float distanceMeters = Float.valueOf(dp.getValue(Field.FIELD_DISTANCE).toString());
+            if (distanceMeters < 1000) {
+                mDistanceValue.setText(distanceMeters + " m");
+            } else {
+                float distance = distanceMeters / 1000;
+                mDistanceValue.setText(roundTwoDecimals(distance) + " km");
+            }
+            mTrackedDistance = distanceMeters;
         } else if (dp.getDataType().equals(DataType.TYPE_LOCATION_SAMPLE)) {
             String lat = dp.getValue(Field.FIELD_LATITUDE).toString();
             String lng = dp.getValue(Field.FIELD_LONGITUDE).toString();
             mLocationList.add(new LatLng(Double.valueOf(lat), Double.valueOf(lng)));
+
+            Location loc = new Location("");
+            loc.setLatitude(Double.valueOf(lat));
+            loc.setLongitude(Double.valueOf(lng));
+            if (mCurrentLoc != null) {
+                mCalculatedDistance += mCurrentLoc.distanceTo(loc);
+            }
+            mCurrentLoc = loc;
+
             if (!mLocationNameShown) {
                 Utils.getPlaceDescription(getActivity(), Float.valueOf(lat), Float.valueOf(lng), mLocationValue);
                 mLocationNameShown = true;
