@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
 import android.widget.TextView;
 
 import com.svi.activitytracker.R;
@@ -27,7 +28,7 @@ public class Utils {
                 iconId = R.drawable.walking;
                 break;
             case Constants.ACTIVITY_TYPE_IN_VEHICLE:
-                iconId = R.drawable.riding_a_bus;
+                iconId = R.drawable.driving_a_car;
                 break;
             case Constants.ACTIVITY_TYPE_BIKING:
                 iconId = R.drawable.cycling;
@@ -91,5 +92,10 @@ public class Utils {
                     }
                 }
             }).start();
+    }
+
+    public static String locationStringFromLocation(final Location location) {
+        return Location.convert(location.getLatitude(), Location.FORMAT_DEGREES) + " "
+                + Location.convert(location.getLongitude(), Location.FORMAT_DEGREES);
     }
 }

@@ -57,9 +57,55 @@
                 android:id="@+id/activity_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
                 android:textColor="#9A9A9A"
-                android:textSize="14sp" />
+                android:textSize="14sp"/>
+
+            <ImageView
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:src="@drawable/activity_feed_pin"/>
+
+            <com.svi.activitytracker.view.TextViewRobotoRegular
+                android:id="@+id/activity_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:text="Manila"
+                android:textColor="#9A9A9A"
+                android:textSize="14sp"/>
+
+            <ImageView
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:src="@drawable/activity_feed_track" />
+
+            <com.svi.activitytracker.view.TextViewRobotoRegular
+                android:id="@+id/activity_distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:text="0 m"
+                android:textColor="#9A9A9A"
+                android:textSize="14sp"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/activity_feed_speed"/>
+
+            <com.svi.activitytracker.view.TextViewRobotoRegular
+                android:id="@+id/activity_speed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="0 km\\h"
+                android:textColor="#9A9A9A"
+                android:textSize="14sp"/>
+
         </LinearLayout>
 
         <View
