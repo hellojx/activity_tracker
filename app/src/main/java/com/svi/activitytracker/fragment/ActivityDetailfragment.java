@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -14,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -22,6 +24,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.fitness.Fitness;
@@ -45,6 +48,9 @@ import com.svi.activitytracker.R;
 import com.svi.activitytracker.common.Constants;
 import com.svi.activitytracker.common.Utils;
 import com.svi.activitytracker.ui.MainActivity;
+import com.svi.activitytracker.ui.ManageActivity;
+import com.svi.activitytracker.ui.SplashActivity;
+import com.svi.activitytracker.utils.ActivityUtils;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -65,6 +71,8 @@ public class ActivityDetailfragment extends AbsActivityFragment
     private long mEndTime = -1;
     private int mActivityType = -1;
 
+    private ProgressDialog dialog;
+    private Toolbar toolbar;
     private TextView mDurationValue;
     private TextView mDistanceValue;
     private TextView mLocationValue;
@@ -112,7 +120,7 @@ public class ActivityDetailfragment extends AbsActivityFragment
 
         mapFragment.getMapAsync(this);
 
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.activity_details_toolbar);
+        toolbar = (Toolbar) view.findViewById(R.id.activity_details_toolbar);
         Cursor cursor = getActivity().getApplication().getContentResolver().query(ContactsContract.Profile.CONTENT_URI, null, null, null, null);
         if( cursor != null && cursor.moveToFirst() ){
             String ownerName = cursor.getString(cursor.getColumnIndex("display_name"));
@@ -266,26 +274,72 @@ public class ActivityDetailfragment extends AbsActivityFragment
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch(requestCode) {
             case 100:
-
                 if (resultCode == Activity.RESULT_OK) {
-
                     int newActType = data.getIntExtra("activity_type", -1);
                     editActivityType(newActType);
                 } else if (resultCode == Activity.RESULT_CANCELED){
                 }
-
                 break;
         }
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState){
+    public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
         dailyLog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 getActivity().onBackPressed();
+            }
+        });
+
+        toolbar.inflateMenu(R.menu.menu_main);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_manage:
+                        startActivity(new Intent(getActivity(), ManageActivity.class));
+                        break;
+                    case R.id.action_logout:
+                        disableGoogleFit();
+                        break;
+                }
+                return true;
+            }
+        });
+        dialog = new ProgressDialog(getActivity());
+        checkGoogleFitAPI();
+    }
+
+    private void checkGoogleFitAPI(){
+        Log.d(TAG, "checkGoogleFitAPI");
+        if(!mClient.isConnected()){
+            Log.e(TAG, "Google Fit wasn't connected");
+            return;
+        } else {
+            Log.d(TAG, "Google Fit is connected");
+        }
+    }
+
+    private void disableGoogleFit(){
+        dialog.setMessage(getActivity().getResources().getString(R.string.text_logging_out));
+        dialog.show();
+
+        PendingResult<Status> pendingResult = Fitness.ConfigApi.disableFit(mClient);
+        pendingResult.setResultCallback(new ResultCallback<Status>() {
+            @Override
+            public void onResult(Status status) {
+                if (status.isSuccess()) {
+                    Log.i(TAG, "Google Fit disabled");
+                    ActivityUtils.resetPrefsValues(getActivity(), false);
+                    Intent intent = new Intent(getActivity(), SplashActivity.class);
+                    startActivity(intent);
+                } else {
+                    Log.e(TAG, "Google Fit wasn't disabled " + status);
+                }
+                dialog.dismiss();
             }
         });
     }
