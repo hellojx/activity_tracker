@@ -99,7 +99,7 @@ public class ActivityListFragment extends AbsActivityFragment {
         mSelectedMonth = date.getMonth();
         mSelectedDate = date.getDate();
 
-        mHistory.getHistory(mSelectedYear, mSelectedMonth, mSelectedDate, mHistoryGotListener);
+        //mHistory.getHistory(mSelectedYear, mSelectedMonth, mSelectedDate, mHistoryGotListener);
 
         mDateText.setText(String.valueOf(date.getDate()));
         mMonthText.setText(new DateFormatSymbols().getMonths()[date.getMonth()]);
@@ -139,6 +139,12 @@ public class ActivityListFragment extends AbsActivityFragment {
         }
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mHistory.getHistory(mSelectedYear, mSelectedMonth, mSelectedDate, mHistoryGotListener);
     }
 
     @Override

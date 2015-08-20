@@ -15,6 +15,7 @@ import com.google.android.gms.fitness.request.DataReadRequest;
 import com.google.android.gms.fitness.result.DataReadResult;
 import com.svi.activitytracker.common.Constants;
 import com.svi.activitytracker.common.Display;
+import com.svi.activitytracker.utils.ActivityUtils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -68,6 +69,17 @@ public class History {
 
         List<Field> fields = dp.getDataType().getFields();
         int activityType = Integer.valueOf(dp.getValue(fields.get(0)).toString());
+        Context context = client.getContext();
+        if ((activityType == Constants.ACTIVITY_TYPE_IN_VEHICLE &&
+                !(ActivityUtils.getIsDriving(context) || ActivityUtils.getIsRidingBus(context) || ActivityUtils.getIsRidingTrain(context)))
+                || (activityType == Constants.ACTIVITY_TYPE_BIKING && !(ActivityUtils.getIsCycling(context)))
+                || (activityType == Constants.ACTIVITY_TYPE_RUNNING && !(ActivityUtils.getIsRunning(context)))
+                || (activityType == Constants.ACTIVITY_TYPE_WALKING && !(ActivityUtils.getIsWalking(context)))
+                || (activityType == Constants.ACTIVITY_TYPE_SWIMMING && !(ActivityUtils.getIsSwimming(context)))
+                ) {
+            return;
+        }
+
         switch (activityType) {
             case Constants.ACTIVITY_TYPE_IN_VEHICLE:
             case Constants.ACTIVITY_TYPE_BIKING:
