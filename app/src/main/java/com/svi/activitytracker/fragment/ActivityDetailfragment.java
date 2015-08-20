@@ -164,7 +164,7 @@ public class ActivityDetailfragment extends AbsActivityFragment
         TextView actTime = (TextView) view.findViewById(R.id.activity_time);
 
         final DateFormat dateFormat = new SimpleDateFormat("MMMM d, yyyy");
-        final DateFormat timeFormat = new SimpleDateFormat("h:m a");
+        final DateFormat timeFormat = new SimpleDateFormat("h:mm a");
 
         String date = dateFormat.format(mStartTime);
         String time = timeFormat.format(mStartTime);
