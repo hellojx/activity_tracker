@@ -240,9 +240,9 @@ public class ActivityListFragment extends AbsActivityFragment {
                 activityListViewHolder.mActivityType.setText(item.description);
                 activityListViewHolder.mActivityTimeInterval.findViewById(R.id.activity_time_interval);
                 activityListViewHolder.mActivityTime.findViewById(R.id.activity_time);
-                activityListViewHolder.mActivityLocation.findViewById(R.id.activity_location);
-                activityListViewHolder.mActivitySpeed.findViewById(R.id.activity_speed);
-                activityListViewHolder.mActivityDistance.findViewById(R.id.activity_distance);
+                //activityListViewHolder.mActivityLocation.findViewById(R.id.activity_location);
+                //activityListViewHolder.mActivitySpeed.findViewById(R.id.activity_speed);
+                //activityListViewHolder.mActivityDistance.findViewById(R.id.activity_distance);
             } else {
                 final DateFormat dateFormat = new SimpleDateFormat("HH:mm");
                 String date = dateFormat.format(item.startTime);
@@ -260,9 +260,9 @@ public class ActivityListFragment extends AbsActivityFragment {
                 activityListViewHolder.mActivityTimeInterval.setText(TimeUnit.MILLISECONDS.toMinutes(item.timeInterval) + " min");
                 activityListViewHolder.mActivityTime.setText(date);
 
-                activityListViewHolder.mActivityLocation.setText(location);
-                activityListViewHolder.mActivitySpeed.setText(speed);
-                activityListViewHolder.mActivityDistance.setText(distance);
+                //activityListViewHolder.mActivityLocation.setText(location);
+                //activityListViewHolder.mActivitySpeed.setText(speed);
+                //activityListViewHolder.mActivityDistance.setText(distance);
             }
         }
 
@@ -281,9 +281,9 @@ public class ActivityListFragment extends AbsActivityFragment {
                 mActivityType = (TextView) v.findViewById(R.id.activity_type);
                 mActivityTimeInterval = (TextView) v.findViewById(R.id.activity_time_interval);
                 mActivityTime = (TextView) v.findViewById(R.id.activity_time);
-                mActivityLocation = (TextView) v.findViewById(R.id.activity_location);
-                mActivityDistance = (TextView) v.findViewById(R.id.activity_distance);
-                mActivitySpeed = (TextView) v.findViewById(R.id.activity_speed);
+                //mActivityLocation = (TextView) v.findViewById(R.id.activity_location);
+                //mActivityDistance = (TextView) v.findViewById(R.id.activity_distance);
+                //mActivitySpeed = (TextView) v.findViewById(R.id.activity_speed);
             }
         }
 
